@@ -1,10 +1,9 @@
 // @ts-check
 import { defineConfig } from "astro/config";
-
-import preact from "@astrojs/preact";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://blog-astro-minimal.netlify.app",
-  integrations: [preact()],
+  site: "https://biplabmahanty.netlify.app",
+  vite: { plugins: [tailwindcss()] },
 });

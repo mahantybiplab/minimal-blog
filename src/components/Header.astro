@@ -1,22 +1,28 @@
 ---
-import Menu from "./Menu.astro";
+import Logo from "./Logo.astro";
 import Navigation from "./Navigation.astro";
 import ThemeIcon from "./ThemeIcon.astro";
 ---
 
-<header>
-  <nav>
-    <div>
-      <ThemeIcon />
-      <Menu />
-    </div>
+<!-- 
+  File: Header.astro
+  Purpose: Responsive, centered header layout using Tailwind CSS only.
+-->
+
+<header class="sticky top-0 z-50 backdrop-blur-md border-b bg-transparent border-slate-200">
+  <nav
+    class="flex items-center justify-between
+           px-4 sm:px-8 md:px-16 py-3
+           max-w-7xl mx-auto"
+  >
+    <!-- Left: Logo -->
+    <Logo />
+
+    <!-- Center (optional): Theme icon -->
+    <!-- Uncomment if you want it visible -->
+    <!-- <ThemeIcon /> -->
+
+    <!-- Right: Navigation links -->
     <Navigation />
   </nav>
 </header>
-
-<style>
-  div {
-    display: flex;
-    justify-content: space-between;
-  }
-</style>
