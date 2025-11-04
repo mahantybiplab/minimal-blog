@@ -1,8 +1,43 @@
 ---
+import ArticleList from "../components/ArticleList.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+const allPosts = Object.values(
+  import.meta.glob("../pages/posts/*.mdx", { eager: true })
+);
+const tags = [
+  ...new Set(allPosts.map((post: any) => post.frontmatter.tags).flat()),
+];
+console.log(tags)
 const pageTitle = "Home Page";
 ---
 
-<BaseLayout pageTitle={pageTitle}>
-  <h2 class="text-logo-dark font-bold uppercase">Code, Chaos & Curiosity</h2>
+<BaseLayout pageTitle={pageTitle} showHero={true}>
+  <div class="flex flex-col md:flex-row md:gap-6">
+    <div class="basis-3/5 min-w-0">
+      <h2 class="text-logo-dark font-bold uppercase mb-9 tracking-wider px-4">
+        Code, Chaos & Curiosity
+      </h2>
+      <ArticleList />
+    </div>
+
+    <div class="basis-2/5 min-w-0 pl-4">
+      <h2 class="text-logo-dark font-bold uppercase md:mt-20 mt-7 mb-7  tracking-wider ">
+        Categories
+      </h2>
+      <div class="flex gap-2 flex-wrap">
+        {
+          tags.map(tag => (
+            <a
+              href={`/tags/${tag}`}
+              class="inline-block border border-gray-600 text-gray-200 px-4 py-1.5 
+             rounded-lg text-sm font-medium transition-all duration-200 
+             hover:border-gray-400 hover:text-white hover:scale-[1.03]"
+            >
+              {tag}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
 </BaseLayout>

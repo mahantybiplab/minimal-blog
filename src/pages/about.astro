@@ -1,76 +1,54 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-
+import { Image } from "astro:assets";
+import AuthorImage from "../assets/images/authorImage.png";
 const pageTitle = "About Me";
-
-const identity = {
-  firstName: "Biplab",
-  country: "India",
-  occupation: "Technical Writer",
-  hobbies: ["understanding myself", "exploring nature"],
-};
-
-const skills = ["HTML", "CSS", "JavaScript", "React", "Astro", "Writing Docs"];
-
-const happy = true;
-const finished = true;
-const goal = 3;
-
-const skillColor = "crimson";
-const fontWeight = "bold";
-const textCase = "uppercase";
 ---
 
 <BaseLayout pageTitle={pageTitle}>
-  <style is:global define:vars={{ skillColor, fontWeight, textCase }}>
-    h1 {
-      color: purple;
-      font-size: 4rem;
-    }
-    .skill {
-      color: var(--skillColor);
-      font-weight: var(--fontWeight);
-      text-transform: var(--textCase);
-    }
-  </style>
-  <h2>... and my new Astro site!</h2>
+  <section class="max-w-6xl mx-auto px-2 py-16 sm:py-20 lg:py-24">
+    <div class="grid grid-cols-1 md:grid-cols-2  items-center gap-5">
+      <!-- Left: Text Content -->
+      <div class="space-y-5 lg:space-y-7 order-2 md:order-1">
+        <h1
+          class="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight
+                   lg:whitespace-nowrap"
+        >
+          Hi there! I'm Biplab.
+        </h1>
 
-  <p>
-    I am working through Astro's introductory tutorial. This is the second page
-    on my website, and it's the first one I built myself!
-  </p>
+        <p class="text-base sm:text-lg lg:text-xl text-gray-300">
+          Most people know me by that name — but that’s just a label, a way to
+          be identified. If I were to strip away every layer of identification,
+          who would I really be?
+        </p>
 
-  <p>
-    This site will update as I complete more of the tutorial, so keep checking
-    back and see how my journey is going!
-  </p>
-  <p>Here are a few facts about me:</p>
-  <ul>
-    <li>My name is {identity.firstName}.</li>
-    <li>
-      I live in {identity.country} and I work as a {identity.occupation}.
-    </li>
-    {
-      identity.hobbies.length >= 2 && (
-        <li>
-          Two of my hobbies are: {identity.hobbies[0]} and {identity.hobbies[1]}
-        </li>
-      )
-    }
-  </ul>
-  <p>My skills are:</p>
-  <ul>
-    {skills.map((skill) => <li class="skill">{skill}</li>)}
-  </ul>
-  {happy && <p>I am happy to be learning Astro!</p>}
+        <p class="text-base sm:text-lg lg:text-xl text-gray-300">
+          Have you ever wondered the same? It feels almost absurd — we spend so
+          much time learning about the world, yet so little time understanding
+          ourselves.
+        </p>
+        <p class="text-base sm:text-lg lg:text-xl text-gray-300">
+          These days, I find joy in exploring that intersection — life, code,
+          and the beautiful chaos and calm that live within both.
+        </p>
+      </div>
 
-  {finished && <p>I finished this tutorial!</p>}
-
-  {
-    goal === 3 ? (
-      <p>My goal is to finish in 3 days.</p>
-    ) : (
-      <p>I'm aiming to spend more than 3 days on this</p>
-    )
-  }
+      <!-- Right: Image -->
+      <div
+        class="flex justify-center md:justify-end order-1 md:order-2 "
+      >
+        <div
+          class="w-64 sm:w-72 md:w-80 lg:w-96 aspect-square rounded-3xl overflow-hidden
+            shadow-[0_0_40px_rgba(120,120,255,0.1)] transition-transform duration-500 hover:-translate-y-1"
+        >
+          <Image
+            src={AuthorImage}
+            alt="Professional photo"
+            class="w-full h-full object-cover object-center"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

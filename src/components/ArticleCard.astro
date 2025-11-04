@@ -1,0 +1,68 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  description: string;
+  url: string;
+}
+const { title, subtitle = false, description, url } = Astro.props;
+---
+
+<article
+  class="group/article flex flex-col items-start break-keep transition-colors duration-300 hover:bg-white/5 rounded-lg p-4"
+>
+  <!-- Text content -->
+  <div class="group/area w-full">
+    <a href={url} class="pb-1 w-fit block">
+      <span
+        class="text-xl font-semibold text-slight-gray hover:underline hover:text-nav hover:decoration-2 transition-colors"
+      >
+        {title}
+      </span>
+    </a>
+    {subtitle && <p class="font-bold pb-2  text-indigo-300">{subtitle}</p>}
+    <p class="text-base py-2 text-gray-300">{description}</p>
+  </div>
+  <!-- Read More section -->
+  <a
+    href={url}
+    class="group/readmore mt-4 mb-7 text-lg font-semibold flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors w-fit"
+  >
+    Read more
+    <!-- Arrow animation -->
+    <svg
+      width="60"
+      height="12"
+      viewBox="0 0 60 12"
+      fill="none"
+      stroke="#667eea"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="transition-all"
+    >
+      <!-- First arrow: appears on article hover -->
+      <path
+        d="M6 6H10.5 M8.5 2L10.5 6L8.5 10"
+        class="opacity-0 translate-x-0 transition-all duration-200 ease-out
+                 group-hover/article:opacity-100 group-hover/readmore:opacity-100"
+      ></path>
+      <!-- Following arrows: appear on Read more hover -->
+      <path
+        d="M8.5 10L11 6L8.5 2"
+        class="opacity-0 transition-all duration-200 delay-100 ease-out
+           group-hover/readmore:opacity-100 group-hover/readmore:translate-x-1"
+      ></path>
+      <path
+        d="M11 10L13.5 6L11 2"
+        class="opacity-0 transition-all duration-200 delay-200 ease-out
+           group-hover/readmore:opacity-100 group-hover/readmore:translate-x-1"
+      ></path>
+      <path
+        d="M13.5 10L16 6L13.5 2"
+        class="opacity-0 transition-all duration-200 delay-300 ease-out
+           group-hover/readmore:opacity-100 group-hover/readmore:translate-x-1"
+      ></path>
+    </svg>
+  </a>
+</article>

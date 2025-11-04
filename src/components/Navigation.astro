@@ -1,8 +1,12 @@
+---
+import { Icon } from 'astro-icon/components'
+---
+
 <nav class="relative p-4 group">
   <label class="sm:hidden">
     <input type="checkbox" class="peer hidden" />
     <svg
-      class="w-6 h-6 text-white cursor-pointer hidden sm:hidden peer-not-checked:block absolute top-1 right-4 z-50"
+      class="w-6 h-6 text-slight-gray cursor-pointer hidden sm:hidden peer-not-checked:block absolute top-1 right-4 z-50"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -16,7 +20,7 @@
     </svg>
     <!-- Close Icon -->
     <svg
-      class="w-6 h-6 text-white cursor-pointer
+      class="w-6 h-6 text-slight-gray cursor-pointer
            hidden sm:hidden peer-checked:block
  absolute top-1 right-4 z-50"
       xmlns="http://www.w3.org/2000/svg"
@@ -44,17 +48,37 @@
              
              sm:max-h-none sm:opacity-100 sm:flex"
   >
-    <li class="hover:text-indigo-400 text-white hover:underline font-semibold">
+    <li
+      class="hover:text-nav text-slight-gray hover:underline font-semibold"
+    >
       <a href="/">Home</a>
     </li>
-    <li class="hover:text-indigo-400 text-white hover:underline font-semibold">
+    <li
+      class="hover:text-nav text-slight-gray hover:underline font-semibold"
+    >
       <a href="/about/">About</a>
     </li>
-    <li class="hover:text-indigo-400 text-white hover:underline font-semibold">
-      <a href="/blog/">Blog</a>
+    <li
+      class="hover:text-nav text-slight-gray hover:underline font-semibold"
+    >
+      <a
+        href="https://github.com/mahantybiplab/"
+        target="_blank"
+        class="hover:text-gray-400"
+      >
+        <Icon name="mdi:github" size={24} />
+      </a>
     </li>
-    <li class="hover:text-indigo-400 text-white hover:underline font-semibold">
-      <a href="/tags/">Tags</a>
+    <li
+      class="hover:text-nav text-slight-gray hover:underline font-semibold"
+    >
+      <a
+        href="https://x.com/MahantyBiplab3"
+        target="_blank"
+        class="hover:text-gray-400"
+      >
+        <Icon name="x" size={20} />
+      </a>
     </li>
   </ul>
 </nav>

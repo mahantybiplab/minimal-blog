@@ -1,0 +1,67 @@
+---
+const { frontmatter } = Astro.props;
+const { pubDate, tags, title, subtitle } = frontmatter;
+
+// Format dates
+const shortDate = new Date(pubDate).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+});
+
+function formatDateWithOrdinal(dateString:string) {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const suffix =
+    day % 10 === 1 && day !== 11
+      ? "st"
+      : day % 10 === 2 && day !== 12
+      ? "nd"
+      : day % 10 === 3 && day !== 13
+      ? "rd"
+      : "th";
+  const month = date.toLocaleString("en-US", { month: "long" });
+  const year = date.getFullYear();
+  return `${month} ${day}${suffix}, ${year}`;
+}
+
+const fullDate = formatDateWithOrdinal(frontmatter.pubDate);
+---
+
+<div class="mt-22">
+  <h1 class="flex flex-col">
+    <span class="pb-2 underline">{title}</span>
+    {subtitle && <span class="text-xl text-slate-500 ">{subtitle}</span>}
+  </h1>
+  <div>
+    <dl
+      class="not-prose flex flex-wrap gap-x-2 items-center text-slate-500  font-medium leading-tight"
+    >
+      <!-- Filed under -->
+      <dt class="italic opacity-70 text-slate-500">Filed under</dt>
+
+      <!-- Tag link -->
+      <dd>
+        <a
+          href={`/tags/${tags?.[0]}/`}
+          class="no-underline text-nav transition-colors  "
+        >
+          {tags?.[0]}
+        </a>
+      </dd>
+
+      <!-- 'on' label -->
+      <dt class="italic opacity-70">on</dt>
+
+      <!-- Full date (desktop) -->
+      <dd class="hidden md:inline text-gray-300">
+        {fullDate}
+        <span class="text-gray-500">.</span>
+      </dd>
+
+      <!-- Short date (mobile) -->
+      <dd class="inline md:hidden  text-gray-300">
+        {shortDate}
+      </dd>
+    </dl>
+  </div>
+</div>
