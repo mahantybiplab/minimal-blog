@@ -8,7 +8,9 @@ const { frontmatter } = Astro.props;
 
 <BaseLayout pageTitle={frontmatter.title}>
   <Prose>
-    <PostMeta frontmatter={frontmatter} />
-    <slot />
+    <div class="pr-1">
+      <PostMeta frontmatter={frontmatter} />
+      <slot />
+    </div>
   </Prose>
 </BaseLayout>
