@@ -1,9 +1,12 @@
 ---
+import { getCollection } from 'astro:content';
 import ArticleCard from "./ArticleCard.astro";
 
-const allPosts = Object.values(import.meta.glob('../pages/posts/*.mdx', { eager: true }));
+const allPosts = await getCollection('blog');
+// Sort by date descending
+allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <div >
-   {allPosts.map((post: any) => <ArticleCard url={post.url} title={post.frontmatter.title} description={post.frontmatter.description} subtitle={post.frontmatter.subtitle}/>)}
+   {allPosts.map((post: any) => <ArticleCard url={`/posts/${post.slug}`} title={post.data.title} description={post.data.description} subtitle={post.data.subtitle}/>)}
 </div>
