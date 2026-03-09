@@ -9,6 +9,12 @@ import mdx from "@astrojs/mdx";
 // https://astro.build/config
 export default defineConfig({
   site: "https://biplabmahanty.netlify.app",
+  markdown: {
+    shikiConfig: {
+      theme: "tokyo-night",
+      wrap: true,
+    },
+  },
   vite: { plugins: [tailwindcss()] },
   integrations: [icon(), mdx()],
 });
