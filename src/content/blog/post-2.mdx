@@ -3,6 +3,43 @@ title: My Second Blog Post
 author: Astro Learner
 description: "After learning some Astro, I couldn't stop!"
 pubDate: 2022-07-08
-tags: ["successes"]
+tags: ["successes", "rust"]
 ---
 After a successful first week learning Astro, I decided to try some more. I wrote and imported a small component from memory!
+
+## Exploring Rust
+
+Besides Astro, I've also been diving into **Rust**. It's a powerful language that focuses on performance and memory safety. Here is a simple example of a factorial function in Rust:
+
+```rust
+fn factorial(n: u64) -> u64 {
+    (1..=n).product()
+}
+
+fn main() {
+    let num = 5;
+    println!("The factorial of {} is {}", num, factorial(num));
+}
+```
+
+I'm excited to see how I can combine Rust with my Astro projects in the future, perhaps using WebAssembly for high-performance components!
+
+> [!warning]-
+> Recall the complex example we analyzed in earlier lectures:
+>
+> ```python
+> def r(x1: bool, x2: F, x3: F) -> F:
+>     return x2 * x3 if x1 else x2 + x3
+> ```
+>
+> This can be represented as:
+> $$r = x_1 \times (x_2 \times x_3) + (1 - x_1) \times (x_2 + x_3).$$
+>
+> We also had the additional constraint $x_1 \times (1 - x_1) = 0$ to ensure $x_1$ is binary.
+>
+> The resulting system of constraints was:
+> $$x_1 \times x_1 = x_1 \tag{1}$$
+> $$x_2 \times x_3 = \mathsf{mult} \tag{2}$$
+> $$x_1 \times \mathsf{mult} = \mathsf{selectMult} \tag{3}$$
+> $$(1 - x_1) \times (x_2 + x_3) = r - \mathsf{selectMult} \tag{4}$$
+

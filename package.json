@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "my-blog",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -15,6 +15,9 @@
     "@tailwindcss/vite": "^4.1.16",
     "astro": "^5.18.0",
     "astro-icon": "^1.1.5",
+    "rehype-callouts": "^2.1.2",
+    "rehype-mathjax": "^7.1.0",
+    "remark-math": "^6.0.0",
     "sharp": "^0.34.4",
     "tailwindcss": "^4.1.16"
   },

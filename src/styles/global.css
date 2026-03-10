@@ -1,33 +1,98 @@
 @import "tailwindcss";
-@plugin '@tailwindcss/typography';
+@import "rehype-callouts/theme/obsidian";
+@plugin "@tailwindcss/typography";
+
+/* ------------------------------
+   Theme variables
+--------------------------------*/
 
 @theme {
   --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+
+  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, "SF Mono",
+    Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   --color-logo-light: rgb(66, 66, 250);
   --color-logo-dark: rgb(128, 159, 255);
+
   --color-body: #0a0a12;
   --color-nav: #667eea;
-  --color-menu:#0f0f1e;
-  --color-slight-gray:rgb(227, 230, 232);
-  --color-article-subtitle:rgb(156, 168, 180);
+  --color-menu: #0f0f1e;
+  --color-slight-gray: rgb(227, 230, 232);
+  --color-article-subtitle: rgb(156, 168, 180);
 }
 
-@layer base {
-  pre {
-    @apply border border-white/10 rounded-xl overflow-hidden shadow-2xl;
-  }
-  
-  code {
-    @apply text-[0.9em] leading-relaxed;
-  }
+/* ---------------------------------------------------------
+   1. OBSIDIAN CALLOUT LINE BREAKS (every > on a new line)
+--------------------------------------------------------- */
+.prose .callout {
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-slight-gray);
+}
 
-  .prose :where(code):not(:where([class~="not-prose"] *))::before,
-  .prose :where(code):not(:where([class~="not-prose"] *))::after {
-    content: "" !important;
-  }
+.prose .callout-content > p {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+  font-size: 1.1em;
+  font-weight: 500;
+  white-space: pre-line !important; /* Forces Astro to render Obsidian's single \n breaks */
+}
+
+/* ---------------------------------------------------------
+   2. INLINE MATH FIX (CLI fix + Tailwind Override)
+--------------------------------------------------------- */
+mjx-container:not([display="true"]) {
+  display: inline-block !important;
+  white-space: normal !important; /* CLI Fix: Protects math from the pre-line rule above */
+  vertical-align: middle !important;
+}
+
+mjx-container:not([display="true"]) svg {
+  display: inline !important; /* Tailwind Override: Stops SVGs from breaking the sentence */
+  margin: 0 !important;
+}
+
+/* ---------------------------------------------------------
+   3. BLOCK MATH CENTERING (Callouts & Standard)
+--------------------------------------------------------- */
+/* Center true block math AND fake block math trapped inside callout paragraphs */
+mjx-container[display="true"],
+.prose p:has(> mjx-container:only-child),
+.callout-content p:has(> mjx-container:only-child) {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin: 1.5rem 0 !important;
+  white-space: normal !important; /* Protects display math from the pre-line rule */
+}
+
+/* Ensure Callout Titles don't break */
+.callout-title mjx-container {
+  margin: 0 !important;
+  display: inline-block !important;
+}
+.callout-title mjx-container svg {
+  display: inline !important;
+  vertical-align: middle !important;
+}
+
+/* Tailwind Prose overrides for rehype-callouts */
+.prose .callout {
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  /* color: var(--color-slight-gray); */
+}
+.prose .callout-content > p {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+
+  font-style: italic ;
+  font-size: 1.1em ;
+  font-weight: 500;
+
 }
