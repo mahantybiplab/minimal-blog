@@ -93,9 +93,30 @@ const { pageTitle, showHero = false } = Astro.props;
           });
         });
       }
-      
+
       setupCodeBlocks();
       document.addEventListener("astro:after-swap", setupCodeBlocks);
+      document.addEventListener("DOMContentLoaded", () => {
+        // Find all paragraphs that contain ONLY a single mjx-container (no other text)
+        document
+          .querySelectorAll(".callout-content p, .prose p")
+          .forEach((p) => {
+            const children = [...p.childNodes].filter(
+              (n) =>
+                !(n.nodeType === Node.TEXT_NODE && n.textContent.trim() === ""),
+            );
+            if (
+              children.length === 1 &&
+              children[0].nodeName === "MJX-CONTAINER"
+            ) {
+              p.style.textAlign = "center";
+              p.style.display = "block";
+              children[0].style.display = "inline-block";
+              children[0].style.marginLeft = "auto";
+              children[0].style.marginRight = "auto";
+            }
+          });
+      });
     </script>
   </body>
 </html>

@@ -60,9 +60,7 @@ mjx-container:not([display="true"]) svg {
    3. BLOCK MATH CENTERING (Callouts & Standard)
 --------------------------------------------------------- */
 /* Center true block math AND fake block math trapped inside callout paragraphs */
-mjx-container[display="true"],
-.prose p:has(> mjx-container:only-child),
-.callout-content p:has(> mjx-container:only-child) {
+mjx-container[display="true"]{
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
@@ -95,4 +93,11 @@ mjx-container[display="true"],
   font-size: 1.1em ;
   font-weight: 500;
 
+}
+
+.prose strong {
+  background: linear-gradient(90deg, #a8c8fe, #d4c4fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
