@@ -30,7 +30,7 @@
 .prose .callout {
   margin-top: 1rem;
   margin-bottom: 1.5rem;
-  color: var(--color-slight-gray);
+  /* color: var(--color-slight-gray); */
 }
 
 .prose .callout-content > p {
@@ -42,59 +42,11 @@
   white-space: pre-line !important; /* Forces Astro to render Obsidian's single \n breaks */
 }
 
-/* ---------------------------------------------------------
-   2. INLINE MATH FIX (CLI fix + Tailwind Override)
---------------------------------------------------------- */
-mjx-container:not([display="true"]) {
-  display: inline-block !important;
-  white-space: normal !important; /* CLI Fix: Protects math from the pre-line rule above */
-  vertical-align: middle !important;
-}
 
-mjx-container:not([display="true"]) svg {
-  display: inline !important; /* Tailwind Override: Stops SVGs from breaking the sentence */
-  margin: 0 !important;
-}
 
 /* ---------------------------------------------------------
-   3. BLOCK MATH CENTERING (Callouts & Standard)
+   2. EXTRA STYLING
 --------------------------------------------------------- */
-/* Center true block math AND fake block math trapped inside callout paragraphs */
-mjx-container[display="true"]{
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  width: 100% !important;
-  margin: 1.5rem 0 !important;
-  white-space: normal !important; /* Protects display math from the pre-line rule */
-}
-
-/* Ensure Callout Titles don't break */
-.callout-title mjx-container {
-  margin: 0 !important;
-  display: inline-block !important;
-}
-.callout-title mjx-container svg {
-  display: inline !important;
-  vertical-align: middle !important;
-}
-
-/* Tailwind Prose overrides for rehype-callouts */
-.prose .callout {
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
-  /* color: var(--color-slight-gray); */
-}
-.prose .callout-content > p {
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-
-  font-style: italic ;
-  font-size: 1.1em ;
-  font-weight: 500;
-
-}
-
 .prose strong {
   background: linear-gradient(90deg, #a8c8fe, #d4c4fd);
   -webkit-background-clip: text;

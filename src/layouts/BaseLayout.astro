@@ -14,6 +14,12 @@ const { pageTitle, showHero = false } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+      integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+      crossorigin="anonymous"
+    />
   </head>
   <body class="bg-body text-white font-sans overflow-x-hidden">
     <Header />
@@ -25,19 +31,190 @@ const { pageTitle, showHero = false } = Astro.props;
 
     <script is:inline>
       const copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
-      const checkIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+      const checkIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+      function extractCalloutText(calloutEl) {
+        const tempDiv = document.createElement("div");
+        tempDiv.style.position = "absolute";
+        tempDiv.style.left = "-9999px";
+        tempDiv.style.whiteSpace = "pre";
+        document.body.appendChild(tempDiv);
+
+        const clone = calloutEl.cloneNode(true);
+        tempDiv.appendChild(clone);
+
+        clone
+          .querySelectorAll(".callout-copy-btn, .copy-btn")
+          .forEach((el) => el.remove());
+        clone
+          .querySelectorAll('.code-block-wrapper span[class*="absolute"]')
+          .forEach((el) => el.remove());
+
+        // A. KATEX → RAW LATEX
+        clone
+          .querySelectorAll("annotation[encoding='application/x-tex']")
+          .forEach((annotation) => {
+            const tex = annotation.textContent.trim();
+            const katexNode = annotation.closest(".katex");
+            if (!katexNode) return;
+
+            const displayWrapper = katexNode.closest(".katex-display");
+            const isBlock =
+              !!displayWrapper ||
+              katexNode.getAttribute("data-is-block") === "true";
+
+            let rawTex;
+            if (isBlock) {
+              rawTex = tex.includes("\n") ? `$$\n${tex}\n$$` : `$$${tex}$$`;
+            } else {
+              rawTex = `$${tex}$`;
+            }
+
+            const target = displayWrapper || katexNode;
+            target.replaceWith(document.createTextNode(rawTex));
+          });
+
+        // B. CODE BLOCKS → fenced markdown
+        clone.querySelectorAll("pre").forEach((pre) => {
+          const code = pre.querySelector("code");
+          if (!code) return;
+
+          const wrapper = pre.closest(".code-block-wrapper");
+          let lang =
+            pre.getAttribute("data-language") ||
+            pre.getAttribute("data-lang") ||
+            wrapper?.getAttribute("data-language") ||
+            Array.from(code.classList)
+              .find((c) => c.startsWith("language-"))
+              ?.replace("language-", "") ||
+            Array.from(pre.classList)
+              .find((c) => c.startsWith("language-"))
+              ?.replace("language-", "") ||
+            "";
+
+          const tempPre = document.createElement("pre");
+          tempPre.style.whiteSpace = "pre";
+          tempPre.appendChild(code.cloneNode(true));
+          document.body.appendChild(tempPre);
+          const codeText = tempPre.innerText.trim();
+          document.body.removeChild(tempPre);
+
+          const fenced = `\`\`\`${lang}\n${codeText}\n\`\`\``;
+          const replaceTarget = wrapper || pre;
+          replaceTarget.replaceWith(document.createTextNode(fenced));
+        });
+
+        // C. TITLE + FOLD CHAR
+        const type = clone.getAttribute("data-callout") || "note";
+
+        let foldChar = "";
+        const foldAttr = calloutEl.getAttribute("data-callout-fold");
+        if (foldAttr !== null) {
+          foldChar = foldAttr === "-" ? "-" : "+";
+        } else {
+          const detailsEl =
+            (calloutEl.tagName?.toLowerCase() === "details"
+              ? calloutEl
+              : null) ||
+            calloutEl.closest("details") ||
+            calloutEl.querySelector("details");
+          if (detailsEl) {
+            foldChar = detailsEl.hasAttribute("open") ? "-" : "+";
+          }
+        }
+
+        const titleEl = clone.querySelector(".callout-title");
+        let titleText = "";
+        if (titleEl) {
+          titleEl
+            .querySelectorAll(".callout-icon, .callout-fold, svg, button")
+            .forEach((el) => el.remove());
+          titleText = titleEl.textContent.trim();
+          titleEl.remove();
+        }
+
+        const autoTitle = type.charAt(0).toUpperCase() + type.slice(1);
+        const titlePart =
+          titleText && titleText.toLowerCase() !== type.toLowerCase()
+            ? ` ${titleText}`
+            : "";
+        const headerLine = `> [!${type}]${foldChar}${titlePart}\n`;
+
+        // D. INLINE FORMATTING
+        for (let i = 1; i <= 6; i++) {
+          clone.querySelectorAll(`h${i}`).forEach((h) => {
+            h.prepend(`${"#".repeat(i)} `);
+            h.append("\n");
+          });
+        }
+        clone.querySelectorAll("strong, b").forEach((el) => {
+          el.prepend("**");
+          el.append("**");
+        });
+        clone.querySelectorAll("em, i").forEach((el) => {
+          el.prepend("*");
+          el.append("*");
+        });
+
+        // E. EXTRACT + PREFIX
+        const bodyText = tempDiv.innerText.trim();
+        const lines = bodyText.split("\n");
+        const prefixedLines = lines.map((line) =>
+          line.trim() === "" ? ">" : `> ${line}`,
+        );
+        let result = prefixedLines.join("\n");
+
+        // Insert blank > line between consecutive $$ blocks
+        result = result.replace(/\n(> \$\$)\n(> \$\$)/g, "\n$1\n>\n$2");
+
+        document.body.removeChild(tempDiv);
+
+        return headerLine + result;
+      }
+
+      function setupCalloutCopy() {
+        document.querySelectorAll(".callout").forEach((callout) => {
+          if (callout.querySelector(".callout-copy-btn")) return;
+          const title = callout.querySelector(".callout-title");
+          if (!title) return;
+
+          callout.style.position = "relative";
+          callout.style.overflow = "visible";
+
+          const btn = document.createElement("button");
+          btn.className =
+            "callout-copy-btn absolute top-3 right-3 flex items-center gap-1 text-white/30 hover:text-white/80 transition-all cursor-pointer text-[10px] font-bold uppercase tracking-wider z-20";
+          btn.innerHTML = `<span class="icon">${copyIcon}</span><span class="text">Copy</span>`;
+
+          callout.appendChild(btn);
+
+          btn.addEventListener("click", async () => {
+            const rawText = extractCalloutText(callout);
+            try {
+              await navigator.clipboard.writeText(rawText);
+              btn.querySelector(".icon").innerHTML = checkIcon;
+              btn.querySelector(".text").innerText = "Copied!";
+              btn.style.color = "#4ade80";
+              setTimeout(() => {
+                btn.querySelector(".icon").innerHTML = copyIcon;
+                btn.querySelector(".text").innerText = "Copy";
+                btn.style.color = "";
+              }, 2000);
+            } catch (err) {
+              console.error("Failed to copy!", err);
+            }
+          });
+        });
+      }
 
       function setupCodeBlocks() {
         document.querySelectorAll("pre").forEach((pre) => {
           if (pre.closest(".code-block-wrapper")) return;
-
-          // Wrap the pre in a relative container
           const wrapper = document.createElement("div");
           wrapper.className = "code-block-wrapper relative";
           pre.parentNode.insertBefore(wrapper, pre);
           wrapper.appendChild(pre);
 
-          // Get language
           let lang =
             pre.getAttribute("data-language") || pre.getAttribute("data-lang");
           if (!lang) {
@@ -51,13 +228,11 @@ const { pageTitle, showHero = false } = Astro.props;
           }
           lang = lang || "code";
 
-          // Create Language Label (Top Left)
           const langLabel = document.createElement("span");
           langLabel.className =
             "absolute top-3 left-4 text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] font-bold z-20 select-none pointer-events-none";
           langLabel.innerText = lang;
 
-          // Create Copy Button (Top Right)
           const btn = document.createElement("button");
           btn.className =
             "copy-btn absolute top-3 right-4 flex items-center gap-1.5 text-white/40 hover:text-white transition-all cursor-pointer text-[11px] font-bold uppercase tracking-wider z-20 select-none";
@@ -65,11 +240,8 @@ const { pageTitle, showHero = false } = Astro.props;
 
           wrapper.appendChild(langLabel);
           wrapper.appendChild(btn);
-
-          // Pad pre to prevent text overlap
           pre.style.paddingTop = "2.5rem";
 
-          // Copy Logic
           const icon = btn.querySelector(".icon");
           const text = btn.querySelector(".text");
 
@@ -81,7 +253,6 @@ const { pageTitle, showHero = false } = Astro.props;
               icon.innerHTML = checkIcon;
               text.innerText = "Copied!";
               btn.style.color = "#4ade80";
-
               setTimeout(() => {
                 icon.innerHTML = copyIcon;
                 text.innerText = "Copy";
@@ -94,29 +265,14 @@ const { pageTitle, showHero = false } = Astro.props;
         });
       }
 
-      setupCodeBlocks();
-      document.addEventListener("astro:after-swap", setupCodeBlocks);
-      document.addEventListener("DOMContentLoaded", () => {
-        // Find all paragraphs that contain ONLY a single mjx-container (no other text)
-        document
-          .querySelectorAll(".callout-content p, .prose p")
-          .forEach((p) => {
-            const children = [...p.childNodes].filter(
-              (n) =>
-                !(n.nodeType === Node.TEXT_NODE && n.textContent.trim() === ""),
-            );
-            if (
-              children.length === 1 &&
-              children[0].nodeName === "MJX-CONTAINER"
-            ) {
-              p.style.textAlign = "center";
-              p.style.display = "block";
-              children[0].style.display = "inline-block";
-              children[0].style.marginLeft = "auto";
-              children[0].style.marginRight = "auto";
-            }
-          });
-      });
+      function init() {
+        setupCodeBlocks();
+        setupCalloutCopy();
+      }
+
+      init();
+      document.addEventListener("astro:after-swap", init);
+      document.addEventListener("DOMContentLoaded", init);
     </script>
   </body>
 </html>
