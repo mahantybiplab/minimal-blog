@@ -14,14 +14,42 @@
   --font-mono: "Fira Code", ui-monospace, SFMono-Regular, "SF Mono",
     Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  --color-logo-light: rgb(66, 66, 250);
-  --color-logo-dark: rgb(128, 159, 255);
+  /* Adaptive Colors */
+  --color-body: var(--bg-body);
+  --color-foreground: var(--fg-body);
+  --color-slight-gray: var(--fg-muted);
+  --color-nav: var(--color-primary);
+  --color-logo: var(--color-logo-adaptive);
+  --color-menu: var(--bg-menu);
+  --color-article-subtitle: var(--fg-subtitle);
+  --color-border: var(--border-color);
+  --color-card-hover: var(--bg-card-hover);
+}
 
-  --color-body: #0a0a12;
-  --color-nav: #667eea;
-  --color-menu: #0f0f1e;
-  --color-slight-gray: rgb(227, 230, 232);
-  --color-article-subtitle: rgb(156, 168, 180);
+/* Light Theme (Updated for better contrast and color harmony) */
+:root {
+  --bg-body: #ffffff;
+  --fg-body: #1e293b;
+  --fg-muted: #64748b;
+  --fg-subtitle: #4f46e5;
+  --color-primary: #4f46e5;
+  --color-logo-adaptive: #4f46e5;
+  --bg-menu: #f8fafc;
+  --border-color: #e2e8f0;
+  --bg-card-hover: rgba(15, 23, 42, 0.04);
+}
+
+/* Dark Theme (Original) */
+.dark {
+  --bg-body: #0a0a12;
+  --fg-body: #e3e6e8;
+  --fg-muted: rgb(209, 213, 219); 
+  --fg-subtitle: rgb(156, 168, 180);
+  --color-primary: #667eea;
+  --color-logo-adaptive: rgb(128, 159, 255);
+  --bg-menu: #0f0f1e;
+  --border-color: #1f2937; 
+  --bg-card-hover: rgba(255, 255, 255, 0.05);
 }
 
 /* ---------------------------------------------------------
@@ -30,26 +58,50 @@
 .prose .callout {
   margin-top: 1rem;
   margin-bottom: 1.5rem;
-  /* color: var(--color-slight-gray); */
 }
 
-.prose .callout-content > p {
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+p {
   font-style: italic;
   font-size: 1.1em;
   font-weight: 500;
-  white-space: pre-line !important; /* Forces Astro to render Obsidian's single \n breaks */
+  white-space: pre-line !important; 
 }
-
-
 
 /* ---------------------------------------------------------
    2. EXTRA STYLING
 --------------------------------------------------------- */
+/* Light Mode Bold (Updated vibrant gradient) */
+
 .prose strong {
-  background: linear-gradient(90deg, #a8c8fe, #d4c4fd);
+  background: linear-gradient(90deg, #2e6de0, #7445d4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: inherit;
+}
+
+.dark .prose strong {
+  background: linear-gradient(90deg, #a8c8fe, #d4c4fd); 
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: inherit;
+}
+
+.prose h2, .prose h3 {
+  @apply underline decoration-2 underline-offset-4 decoration-(--color-primary);
+}
+
+@layer components {
+  /* 1. Shield KaTeX from the slight-gray prose paragraph colors */
+  .prose .katex,
+  .prose .katex-display {
+    color: #1e293b !important; /* slate-800 for light mode */
+  }
+
+  /* 2. Ensure it flips to white/light-gray in dark mode */
+  .dark .prose .katex,
+  .dark .prose .katex-display {
+    color: #f8fafc !important; /* slate-50 for dark mode */
+  }
 }

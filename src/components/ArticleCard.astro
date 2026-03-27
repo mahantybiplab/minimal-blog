@@ -9,24 +9,24 @@ const { title, subtitle = false, description, url } = Astro.props;
 ---
 
 <article
-  class="group/article flex flex-col items-start break-keep transition-colors duration-300 hover:bg-white/5 rounded-lg p-4"
+  class="group/article flex flex-col items-start break-keep transition-colors duration-300 hover:bg-card-hover rounded-lg p-4"
 >
   <!-- Text content -->
   <div class="group/area w-full">
-    <a href={url} class="pb-1 w-fit block">
+    <a href={url} class=" w-fit block">
       <span
-        class="text-xl font-semibold text-slight-gray hover:underline hover:text-nav hover:decoration-2 transition-colors"
+        class="text-xl font-semibold text-foreground hover:underline hover:text-nav hover:decoration-2 transition-colors"
       >
         {title}
       </span>
     </a>
-    {subtitle && <p class="font-bold pb-2  text-indigo-300">{subtitle}</p>}
-    <p class="text-base italic font-mono py-2 text-gray-300">{description}</p>
+    {subtitle && <p class="font-bold  text-article-subtitle mt-1">{subtitle}</p>}
+    <p class="text-base italic text-slight-gray mt-4">{description}</p>
   </div>
   <!-- Read More section -->
   <a
     href={url}
-    class="group/readmore mt-4 mb-7 text-lg font-semibold flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors w-fit"
+    class="group/readmore mt-4 mb-7 text-lg font-semibold flex items-center gap-2 text-nav hover:opacity-80 transition-opacity w-fit"
   >
     Read more
     <!-- Arrow animation -->
@@ -35,7 +35,7 @@ const { title, subtitle = false, description, url } = Astro.props;
       height="12"
       viewBox="0 0 60 12"
       fill="none"
-      stroke="#667eea"
+      stroke="currentColor"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"

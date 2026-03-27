@@ -2,14 +2,39 @@
 import Prose from "../components/Prose.astro";
 import BaseLayout from "./BaseLayout.astro";
 import PostMeta from "../components/PostMeta.astro";
-
 const { frontmatter } = Astro.props;
 ---
-
 <BaseLayout pageTitle={frontmatter.title}>
   <Prose>
     <div class="pr-1">
-      <PostMeta frontmatter={frontmatter} />
+      <section
+        class="relative flex items-center justify-center h-[50vh] 
+               after:absolute after:bottom-0 after:left-0 after:right-0 after:h-24
+               after:bg-linear-to-b after:from-transparent after:to-background after:content-['']"
+      >
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 flex items-center justify-center pointer-events-none"
+        >
+          <div
+            class="w-screen h-screen rounded-full
+                   bg-[radial-gradient(circle_at_center,rgba(120,120,255,0.04),transparent_95%)]
+                   dark:bg-[radial-gradient(circle_at_center,rgba(120,120,255,0.08),transparent_100%)]
+                   blur-[180px] sm:blur-[220px]"
+          ></div>
+
+          <div
+            class="absolute w-[80vw] h-[80vh] rounded-full
+                   bg-[radial-gradient(circle_at_center,rgba(240,250,255,0.12),transparent_90%)]
+                   blur-[80px] sm:blur-[100px]"
+          ></div>
+        </div>
+
+        <div class="absolute left-0 top-[5%] z-10">
+          <PostMeta frontmatter={frontmatter} />
+        </div>
+      </section>
+
       <slot />
     </div>
   </Prose>

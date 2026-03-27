@@ -13,14 +13,14 @@ const pageTitle = "Home Page";
 <BaseLayout pageTitle={pageTitle} showHero={true}>
   <div class="flex flex-col md:flex-row md:gap-6">
     <div class="basis-3/5 min-w-0">
-      <h2 class="text-logo-dark font-bold uppercase mb-9 tracking-wider px-4">
+      <h2 class="text-logo font-bold uppercase mb-9 tracking-wider px-4">
         Code, Chaos & Curiosity
       </h2>
       <ArticleList />
     </div>
 
     <div class="basis-2/5 min-w-0 pl-4">
-      <h2 class="text-logo-dark font-bold uppercase md:mt-20 mt-7 mb-7  tracking-wider ">
+      <h2 class="text-logo font-bold uppercase md:mt-20 mt-7 mb-7  tracking-wider ">
         Categories
       </h2>
       <div class="flex gap-2 flex-wrap">
@@ -28,9 +28,9 @@ const pageTitle = "Home Page";
           tags.map(tag => (
             <a
               href={`/tags/${tag}`}
-              class="inline-block border border-gray-600 text-gray-200 px-4 py-1.5 
+              class="inline-block border border-border text-slight-gray px-4 py-1.5 
              rounded-lg text-sm font-medium transition-all duration-200 
-             hover:border-gray-400 hover:text-white hover:scale-[1.03]"
+             hover:border-nav hover:text-nav hover:scale-[1.03]"
             >
               {tag}
             </a>

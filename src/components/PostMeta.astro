@@ -28,22 +28,20 @@ const fullDate = formatDateWithOrdinal(frontmatter.pubDate);
 ---
 
 <div class="mt-22 ">
-  <h1 class="flex flex-col">
-    <span class="pb-2 underline">{title}</span>
-    {subtitle && <span class="text-xl text-slate-500 ">{subtitle}</span>}
-  </h1>
+  <h1>{title}</h1>
+    {subtitle && <div class="text-xl text-article-subtitle font-medium mb-5">{subtitle}</div>}
   <div>
     <dl
-      class="not-prose flex flex-wrap gap-x-2 items-center text-slate-500  font-medium leading-tight"
+      class="not-prose flex flex-wrap gap-x-2 items-center text-slight-gray font-medium leading-tight"
     >
       <!-- Filed under -->
-      <dt class="italic opacity-70 text-slate-500">Filed under</dt>
+      <dt class="italic opacity-70">Filed under</dt>
 
       <!-- Tag link -->
       <dd>
         <a
           href={`/tags/${tags?.[0]}/`}
-          class="no-underline text-nav transition-colors  "
+          class="no-underline text-nav transition-colors"
         >
           {tags?.[0]}
         </a>
@@ -53,13 +51,13 @@ const fullDate = formatDateWithOrdinal(frontmatter.pubDate);
       <dt class="italic opacity-70">on</dt>
 
       <!-- Full date (desktop) -->
-      <dd class="hidden md:inline text-gray-300">
+      <dd class="hidden md:inline text-slight-gray/80">
         {fullDate}
-        <span class="text-gray-500">.</span>
+        <span class="opacity-50">.</span>
       </dd>
 
       <!-- Short date (mobile) -->
-      <dd class="inline md:hidden  text-gray-300">
+      <dd class="inline md:hidden text-slight-gray/80">
         {shortDate}
       </dd>
     </dl>
