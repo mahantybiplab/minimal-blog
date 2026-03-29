@@ -60,12 +60,7 @@
   margin-bottom: 1.5rem;
 }
 
-p {
-  font-style: italic;
-  font-size: 1.1em;
-  font-weight: 500;
-  white-space: pre-line !important; 
-}
+
 
 /* ---------------------------------------------------------
    2. EXTRA STYLING
@@ -103,5 +98,19 @@ p {
   .dark .prose .katex,
   .dark .prose .katex-display {
     color: #f8fafc !important; /* slate-50 for dark mode */
+  }
+
+}
+
+@layer utilities {
+  .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
+  .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+    content: "" !important;
+  }
+
+  /* This prevents the generic prose color from taking over in dark mode */
+  .dark .prose {
+    --tw-prose-body: inherit; 
+    color: var(--color-foreground) !important;
   }
 }
