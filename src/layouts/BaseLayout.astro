@@ -22,27 +22,32 @@ const { pageTitle, showHero = false } = Astro.props;
     />
     <script is:inline>
       const theme = (() => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-          return localStorage.getItem('theme');
+        if (
+          typeof localStorage !== "undefined" &&
+          localStorage.getItem("theme")
+        ) {
+          return localStorage.getItem("theme");
         }
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          return 'dark';
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          return "dark";
         }
-        return 'light';
+        return "light";
       })();
-    
-      if (theme === 'light') {
-        document.documentElement.classList.remove('dark');
+
+      if (theme === "light") {
+        document.documentElement.classList.remove("dark");
       } else {
-        document.documentElement.classList.add('dark');
+        document.documentElement.classList.add("dark");
       }
-      window.localStorage.setItem('theme', theme);
+      window.localStorage.setItem("theme", theme);
     </script>
   </head>
-  <body class="bg-body overscroll-none text-foreground font-sans overflow-x-hidden transition-colors duration-300">
+  <body
+    class="text-foreground font-sans overflow-x-hidden transition-colors duration-300 px-4 sm:px-8 md:px-16"
+  >
     <Header />
     {showHero && <Hero />}
-    <main class="px-4 sm:px-8 md:px-16">
+    <main>
       <slot />
       <Footer />
     </main>
@@ -200,10 +205,17 @@ const { pageTitle, showHero = false } = Astro.props;
           callout.style.overflow = "visible";
 
           const btn = document.createElement("button");
-          btn.className =
-            "callout-copy-btn absolute top-3 right-3 flex items-center gap-1 text-white/30 hover:text-white/80 transition-all cursor-pointer text-[10px] font-bold uppercase tracking-wider z-20";
           btn.innerHTML = `<span class="icon">${copyIcon}</span><span class="text">Copy</span>`;
+          btn.className =
+            "callout-copy-btn absolute top-3 right-3 flex items-center gap-1 transition-all cursor-pointer text-[10px] font-bold uppercase tracking-wider z-20";
+          btn.style.color = "var(--color-foreground)";
 
+          btn.addEventListener("mouseenter", () => {
+            btn.style.color = "var(--color-logo)";
+          });
+          btn.addEventListener("mouseleave", () => {
+            btn.style.color = "var(--color-foreground)";
+          });
           callout.appendChild(btn);
 
           btn.addEventListener("click", async () => {
@@ -248,12 +260,12 @@ const { pageTitle, showHero = false } = Astro.props;
 
           const langLabel = document.createElement("span");
           langLabel.className =
-            "absolute top-3 left-4 text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] font-bold z-20 select-none pointer-events-none";
+            "absolute top-3 left-4 text-[10px] font-mono text-foreground/30 dark:text-white/30 uppercase tracking-[0.2em] font-bold z-20 select-none pointer-events-none";
           langLabel.innerText = lang;
 
           const btn = document.createElement("button");
           btn.className =
-            "copy-btn absolute top-3 right-4 flex items-center gap-1.5 text-white/40 hover:text-white transition-all cursor-pointer text-[11px] font-bold uppercase tracking-wider z-20 select-none";
+            "copy-btn absolute top-3 right-4 flex items-center gap-1.5 text-foreground/40 dark:text-white/40 hover:text-foreground dark:hover:text-white transition-all cursor-pointer text-[11px] font-bold uppercase tracking-wider z-20 select-none";
           btn.innerHTML = `<span class="icon">${copyIcon}</span><span class="text">Copy</span>`;
 
           wrapper.appendChild(langLabel);

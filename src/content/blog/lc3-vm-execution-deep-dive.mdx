@@ -1,0 +1,592 @@
+---
+title: "Sneaky Header Blocker Trick"
+subtitle: "One of the coolest transitions on this blog. ✨"
+pubDate: 2026-03-30
+description: "A deep-dive into the end-to-end lifecycle of an LC-3 program — covering the two-pass assembler, binary object file structure, VM loader, and the Fetch-Decode-Execute CPU loop, all traced through a concrete add.asm example."
+author: "Biplab Mahanty"
+tags: ["lc3", "virtual-machine", "rust", "systems-programming", "assembly"]
+---
+
+**From Source Text → Binary Object → Memory → CPU Registers**
+
+
+
+## The Program Under Study
+
+> [!example]- add.asm
+> ```asm
+> .ORIG x3000
+> 
+> ; =====================================
+> ; 1. GET THE FIRST INPUT
+> ; =====================================
+> LEA R0, PROMPT1       ; Load address of PROMPT1 string into R0
+> PUTS                  ; Print the string (TRAP x22)
+> GETC                  ; Wait for keypress → result in R0 (TRAP x20)
+> OUT                   ; Echo the typed char (TRAP x21)
+> LD  R1, ASCII_NEG     ; R1 ← -48 (0xFFD0 in two's complement)
+> ADD R2, R0, R1        ; R2 = R0 − 48  (ASCII digit → integer)
+> LD  R0, NEWLINE       ; Load '\n' character
+> OUT                   ; Print newline
+> 
+> ; =====================================
+> ; 2. GET THE SECOND INPUT
+> ; =====================================
+> LEA R0, PROMPT2
+> PUTS
+> GETC
+> OUT
+> ADD R3, R0, R1        ; R3 = R0 − 48  (ASCII digit → integer)
+> LD  R0, NEWLINE
+> OUT
+> 
+> ; =====================================
+> ; 3. DO THE MATH (SHOWING BOTH ADD MODES)
+> ; =====================================
+> ADD R4, R2, R3        ; MODE 1 — REGISTER:  R4 = R2 + R3
+> ADD R4, R4, #2        ; MODE 2 — IMMEDIATE: R4 = R4 + 2 (baked into bits!)
+> 
+> ; =====================================
+> ; 4. PRINT THE RESULT
+> ; =====================================
+> LEA R0, RESULT_STR
+> PUTS
+> LD  R1, ASCII_POS     ; R1 ← +48 (0x0030)
+> ADD R0, R4, R1        ; R0 = R4 + 48  (integer → ASCII char)
+> OUT
+> LD  R0, NEWLINE
+> OUT
+> HALT                  ; TRAP x25
+> 
+> ; =====================================
+> ; DATA SEGMENT
+> ; =====================================
+> PROMPT1     .STRINGZ "Enter 1st digit: "
+> PROMPT2     .STRINGZ "Enter 2nd digit: "
+> RESULT_STR  .STRINGZ "Sum plus 2 is: "
+> NEWLINE     .FILL x000A    ; ASCII '\n'
+> ASCII_NEG   .FILL xFFD0    ; −48 in two's complement
+> ASCII_POS   .FILL x0030    ; +48
+> .END
+> ```
+> 
+
+This program reads two single-digit numbers from the keyboard, converts them from ASCII to integers, adds them using **both** ADD modes (register and immediate), converts the result back to ASCII, and prints it. Walking through its full lifecycle reveals every major mechanism of the LC-3 architecture.
+
+
+
+## Phase 1 — The Assembler: Text → Binary
+
+The assembler translates the `.asm` source into a `.obj` binary in exactly **two passes**.
+
+
+
+### Pass 1: Building the Symbol Table
+
+The assembler's only job in Pass 1 is to scan every line, maintain a **Location Counter (LC)** starting at the `.ORIG` address, and record the address of every label it encounters. No machine code is generated yet.
+
+Each instruction and `.FILL` directive advances the LC by 1 word. `.STRINGZ "text"` advances by `len(text) + 1` words (one word per character, plus a null terminator).
+
+**Instruction section (x3000 → x3018, 25 words):**
+
+| Address | Source Line              | Words |
+|---------|--------------------------|-------|
+| x3000   | `LEA R0, PROMPT1`        | 1     |
+| x3001   | `PUTS` (= TRAP x22)      | 1     |
+| x3002   | `GETC` (= TRAP x20)      | 1     |
+| x3003   | `OUT`  (= TRAP x21)      | 1     |
+| x3004   | `LD R1, ASCII_NEG`       | 1     |
+| x3005   | `ADD R2, R0, R1`         | 1     |
+| x3006   | `LD R0, NEWLINE`         | 1     |
+| x3007   | `OUT`                    | 1     |
+| x3008   | `LEA R0, PROMPT2`        | 1     |
+| x3009   | `PUTS`                   | 1     |
+| x300A   | `GETC`                   | 1     |
+| x300B   | `OUT`                    | 1     |
+| x300C   | `ADD R3, R0, R1`         | 1     |
+| x300D   | `LD R0, NEWLINE`         | 1     |
+| x300E   | `OUT`                    | 1     |
+| x300F   | `ADD R4, R2, R3`         | 1     |
+| x3010   | `ADD R4, R4, #2`         | 1     |
+| x3011   | `LEA R0, RESULT_STR`     | 1     |
+| x3012   | `PUTS`                   | 1     |
+| x3013   | `LD R1, ASCII_POS`       | 1     |
+| x3014   | `ADD R0, R4, R1`         | 1     |
+| x3015   | `OUT`                    | 1     |
+| x3016   | `LD R0, NEWLINE`         | 1     |
+| x3017   | `OUT`                    | 1     |
+| x3018   | `HALT` (= TRAP x25)      | 1     |
+
+**Data section (x3019 onward):**
+
+| Address  | Label         | Directive                       | Words (len + null) |
+|----------|---------------|---------------------------------|--------------------|
+| x3019    | **PROMPT1**   | `.STRINGZ "Enter 1st digit: "` | 18 + 1 = 19        |
+| x302C    | **PROMPT2**   | `.STRINGZ "Enter 2nd digit: "` | 18 + 1 = 19        |
+| x303F    | **RESULT_STR**| `.STRINGZ "Sum plus 2 is: "`   | 15 + 1 = 16        |
+| x304F    | **NEWLINE**   | `.FILL x000A`                   | 1                  |
+| x3050    | **ASCII_NEG** | `.FILL xFFD0`                   | 1                  |
+| x3051    | **ASCII_POS** | `.FILL x0030`                   | 1                  |
+
+**Resulting Symbol Table after Pass 1:**
+
+```
+┌────────────┬────────────┐
+│   Symbol   │  Address   │
+├────────────┼────────────┤
+│  PROMPT1   │  0x3019    │
+│  PROMPT2   │  0x302C    │
+│  RESULT_STR│  0x303F    │
+│  NEWLINE   │  0x304F    │
+│  ASCII_NEG │  0x3050    │
+│  ASCII_POS │  0x3051    │
+└────────────┴────────────┘
+```
+
+Labels are just names for memory addresses. When Pass 2 sees `LD R1, ASCII_NEG`, it doesn't look in the source — it looks up `0x3050` in this table.
+
+
+
+### Pass 2: Code Generation
+
+#### Encoding `ADD R4, R2, R3` — Register Mode (at x300F)
+
+This is the **register mode** ADD, where both source operands come from registers. Identified by **bit [5] = 0**.
+
+**ADD Register Mode Format:**
+```
+┌────┬─────┬─────┬───┬────┬─────┐
+│0001│ DR  │ SR1 │ 0 │ 00 │ SR2 │
+│15:12│11:9│ 8:6 │[5]│4:3 │ 2:0 │
+└────┴─────┴─────┴───┴────┴─────┘
+```
+
+```
+Opcode:    0001         (ADD)
+DR:        100          (R4)
+SR1:       010          (R2)
+bit[5]:    0            (register mode)
+bits[4:3]: 00           (unused)
+SR2:       011          (R3)
+
+Assembly:  0001 100 010 0 00 011
+Grouped:   0001 1000 1000 0011
+Hex:       0x1883
+```
+
+
+
+#### Encoding `ADD R4, R4, #2` — Immediate Mode (at x3010)
+
+This is the **immediate mode** ADD. The literal `2` is **baked directly into the instruction word itself**. Identified by **bit [5] = 1**.
+
+**ADD Immediate Mode Format:**
+```
+┌────┬─────┬─────┬───┬───────────┐
+│0001│ DR  │ SR1 │ 1 │   imm5    │
+│15:12│11:9│ 8:6 │[5]│   4:0     │
+└────┴─────┴─────┴───┴───────────┘
+```
+
+```
+Opcode:    0001         (ADD)
+DR:        100          (R4)
+SR1:       100          (R4)
+bit[5]:    1            (immediate mode ← this single bit changes everything)
+imm5:      00010        (+2, a 5-bit signed value)
+
+Assembly:  0001 100 100 1 00010
+Grouped:   0001 1001 0010 0010
+Hex:       0x1922
+```
+
+**The critical contrast between both encodings:**
+
+```
+Instruction      │ Hex    │ Binary
+─────────────────┼────────┼──────────────────
+ADD R4, R2, R3   │ 0x1883 │ 0001 1000 1000 0011
+ADD R4, R4, #2   │ 0x1922 │ 0001 1001 0010 0010
+                                    ↑
+                              bit[5] flips 0 → 1
+                              CPU reads bits[4:0] as imm5=2
+                              instead of treating bits[2:0] as SR2
+```
+
+The trade-off: immediate mode saves a register load, but the literal is capped at **5 bits** — a range of −16 to +15.
+
+
+
+#### Encoding `LD R1, ASCII_NEG` — PCoffset9 Computation (at x3004)
+
+`LD` loads a value from a memory address computed relative to the **already-incremented PC**:
+
+```
+PCoffset9 = Target − (Instruction Address + 1)
+           = 0x3050 − (0x3004 + 1)
+           = 0x3050 − 0x3005
+           = 0x004B  =  75  =  0b000 0100 1011
+```
+
+**LD Format:**
+```
+┌────┬─────┬─────────────────────┐
+│0010│ DR  │     PCoffset9       │
+│15:12│11:9│       8:0           │
+└────┴─────┴─────────────────────┘
+```
+
+```
+Opcode:    0010         (LD)
+DR:        001          (R1)
+offset:    001001011    (75 = 0x4B)
+
+Full word: 0010 001 001001011
+Grouped:   0010 0010 0100 1011
+Hex:       0x224B
+```
+
+
+#### The ASCII Conversion Trick — Two's Complement Addition
+
+`ADD R2, R0, R1` (where R1 = `0xFFD0 = −48`) converts an ASCII digit to an integer. There is no special "convert" instruction — it's pure two's complement arithmetic.
+
+If the user typed `'5'` (ASCII 53):
+```
+R0 = 0x0035  (53)
+R1 = 0xFFD0  (−48)
+
+0x0035 + 0xFFD0 = 0x10005
+→ truncated to 16 bits = 0x0005 = 5  ✓
+```
+
+The reverse (integer → ASCII) via `ADD R0, R4, R1` where R1 = `0x0030` (+48):
+```
+R4 = 0x000A  (10, the final sum)
+R1 = 0x0030  (+48)
+
+0x000A + 0x0030 = 0x003A  =  ASCII ':'
+```
+
+*(Note: this program assumes single-digit inputs that sum to ≤ 9 before the +2. For sum = 7+1+2 = 10, the output is `:` — a known limitation for teaching purposes.)*
+
+
+
+### The `.obj` File Structure
+
+The assembled output is a flat sequence of 16-bit **big-endian** words. The first word is always the **Origin Address** — the only metadata the format contains.
+
+```
+File Offset │ Bytes (hex) │  Word (hex) │ Meaning
+────────────┼─────────────┼─────────────┼──────────────────────────────
+  0x00–0x01 │   30  00    │   0x3000    │ Origin address
+  0x02–0x03 │   E0  19    │   0xE019    │ LEA R0, PROMPT1
+  0x04–0x05 │   F0  22    │   0xF022    │ PUTS (TRAP x22)
+  0x06–0x07 │   F0  20    │   0xF020    │ GETC (TRAP x20)
+  0x08–0x09 │   F0  21    │   0xF021    │ OUT  (TRAP x21)
+  0x0A–0x0B │   22  4B    │   0x224B    │ LD R1, ASCII_NEG
+  0x0C–0x0D │   14  01    │   0x1401    │ ADD R2, R0, R1
+  ...        │   ...       │   ...       │ ...
+  (x300F)   │   18  83    │   0x1883    │ ADD R4, R2, R3  ← register mode
+  (x3010)   │   19  22    │   0x1922    │ ADD R4, R4, #2  ← immediate mode
+  ...        │   ...       │   ...       │ ...
+  (x3050)   │   FF  D0    │   0xFFD0    │ ASCII_NEG = −48
+  (x3051)   │   00  30    │   0x0030    │ ASCII_POS = +48
+```
+
+**Big-endian** means the Most Significant Byte is written first. For `0x224B`, byte `0x22` hits the disk before `0x4B`. `read_u16::<BigEndian>()` reconstructs this as `(0x22 << 8) | 0x4B = 0x224B`.
+
+
+
+## Phase 2 — The Loader: Disk → VM Memory
+
+When `cargo run -- examples/add.obj` runs, the loader in `main.rs` executes:
+
+```rust
+let base_address = f.read_u16::<BigEndian>().expect("error"); // reads 0x3000
+
+let mut address = base_address as usize; // = 12288
+
+loop {
+    match f.read_u16::<BigEndian>() {
+        Ok(instruction) => {
+            vm.write_memory(address, instruction); // memory[address] = word
+            address += 1;                          // +1, not +2 — each slot is already u16
+        }
+        Err(e) if e.kind() == UnexpectedEof => break,
+        Err(e) => panic!("failed: {}", e),
+    }
+}
+```
+
+`vm.memory` is `[u16; 65535]` — each element holds a full 16-bit word, so the address index increments by 1, not 2.
+
+**Memory state at key addresses after loading:**
+
+```
+Address  │  Value (hex) │  Binary              │  Meaning
+─────────┼──────────────┼──────────────────────┼───────────────────────
+ 0x3000  │   0xE019     │ 1110 0000 0001 1001  │ LEA R0, PROMPT1
+ 0x3004  │   0x224B     │ 0010 0010 0100 1011  │ LD R1, ASCII_NEG
+ 0x3005  │   0x1401     │ 0001 0100 0000 0001  │ ADD R2, R0, R1
+ 0x300F  │   0x1883     │ 0001 1000 1000 0011  │ ADD R4, R2, R3
+ 0x3010  │   0x1922     │ 0001 1001 0010 0010  │ ADD R4, R4, #2
+ 0x3050  │   0xFFD0     │ 1111 1111 1101 0000  │ −48  (ASCII_NEG)
+ 0x3051  │   0x0030     │ 0000 0000 0011 0000  │ +48  (ASCII_POS)
+```
+
+**PC Initialization:** `Registers::new()` hardcodes `pc: PC_START` where `PC_START = 0x3000`. The loader reads the origin word only to know *where to write* the program into memory. The PC is initialized independently by convention — they happen to agree on `0x3000`.
+
+
+
+## Phase 3 — Execution: The CPU's Fetch-Decode-Execute Loop
+
+```rust
+pub fn execute_program(vm: &mut VM) {
+    while vm.registers.pc < MEMORY_SIZE as u16 {
+        let instruction = vm.read_memory(vm.registers.pc); // FETCH
+        vm.registers.pc += 1;                              // INCREMENT PC
+        instruction::execute_instruction(instruction, vm)  // DECODE + EXECUTE
+    }
+}
+```
+
+We trace four cycles that capture every key concept in this program.
+
+
+
+### CPU Cycle 5 — `LD R1, ASCII_NEG` at x3004
+
+#### Fetch
+```
+PC before:    0x3004
+instruction:  vm.memory[0x3004] = 0x224B
+PC after:     0x3005
+```
+
+#### Decode
+```
+0x224B = 0010 0010 0100 1011
+>> 12  = 0000 0000 0000 0010  = 2  →  OpCode::LD
+```
+
+#### Execute — `ld(0x224B, vm)`
+```
+1. Extract DR:
+   0x224B >> 9 = 17
+   17 & 0x7    = 1  →  dr = R1 ✓
+
+2. Extract PCoffset9:
+   0x224B & 0x1FF = 0x04B = 75
+   sign_extend(75, 9): bit[8] of 75 = 0 → positive, no extension
+   pc_offset = 75
+
+3. Effective address:
+   mem = 75 + 0x3005 = 0x3050
+
+4. Read memory:
+   vm.memory[0x3050] = 0xFFD0  (−48)
+
+5. Write to register:
+   R1 = 0xFFD0
+
+6. Condition flags:
+   0xFFD0 >> 15 = 1 → MSB is 1 → negative
+   COND = NEG = (1 << 2) = 0x0004
+```
+
+**State after Cycle 5:**
+```
+R1   = 0xFFD0  (−48)
+COND = 0x0004  (NEG)
+PC   = 0x3005
+```
+
+
+
+### CPU Cycle 6 — `ADD R2, R0, R1` at x3005 *(ASCII → Integer)*
+
+Assume the user typed `'5'`, so GETC placed `R0 = 0x0035` (= 53).
+
+#### Fetch
+```
+PC before:    0x3005
+instruction:  vm.memory[0x3005] = 0x1401
+PC after:     0x3006
+```
+
+#### Decode
+```
+0x1401 = 0001 0100 0000 0001
+>> 12  = 0000 0000 0000 0001  = 1  →  OpCode::ADD
+```
+
+#### Execute — `add(0x1401, vm)`
+```
+0x1401 = 0001 0100 0000 0001
+
+DR      = bits[11:9] = 010 = R2
+SR1     = bits[8:6]  = 000 = R0
+bit[5]               = 0   → REGISTER MODE
+SR2     = bits[2:0]  = 001 = R1
+
+val (as u32) = R0 + R1
+             = 0x0035 + 0xFFD0
+             = 0x10005
+             → truncated to u16 = 0x0005 = 5
+
+R2   = 0x0005
+COND = POS = 0x0001
+```
+
+
+
+### CPU Cycle 16 — `ADD R4, R2, R3` at x300F *(Register Mode)*
+
+Assume the user typed `'3'` for the second input, so after the same ASCII conversion, `R3 = 3`.
+
+#### Fetch
+```
+PC before:    0x300F
+instruction:  vm.memory[0x300F] = 0x1883
+PC after:     0x3010
+```
+
+#### Decode
+```
+0x1883 >> 12 = 1  →  OpCode::ADD
+```
+
+#### Execute — `add(0x1883, vm)`
+```
+0x1883 = 0001 1000 1000 0011
+
+DR      = bits[11:9] = 100 = R4
+SR1     = bits[8:6]  = 010 = R2
+bit[5]               = 0   → REGISTER MODE
+SR2     = bits[2:0]  = 011 = R3
+
+val = R2 + R3 = 5 + 3 = 8
+
+R4   = 0x0008
+COND = POS = 0x0001
+```
+
+
+
+### CPU Cycle 17 — `ADD R4, R4, #2` at x3010 *(Immediate Mode)*
+
+The literal `2` is encoded directly inside the instruction word.
+
+#### Fetch
+```
+PC before:    0x3010
+instruction:  vm.memory[0x3010] = 0x1922
+PC after:     0x3011
+```
+
+#### Decode
+```
+0x1922 >> 12 = 1  →  OpCode::ADD
+```
+
+#### Execute — `add(0x1922, vm)`
+```
+0x1922 = 0001 1001 0010 0010
+
+DR      = bits[11:9] = 100 = R4
+SR1     = bits[8:6]  = 100 = R4
+bit[5]               = 1   → IMMEDIATE MODE ← key difference
+
+imm5 extraction:
+  0x1922 & 0x1F = 0b00010 = 2
+  sign_extend(2, 5): bit[4] of 2 = 0 → positive, no extension
+  imm5 = 2
+
+val = R4 + imm5 = 8 + 2 = 10
+
+R4   = 0x000A  (10)
+COND = POS = 0x0001
+```
+
+**Bit-level contrast of the two ADD cycles:**
+
+```
+ADD R4, R2, R3  →  0x1883  →  0001 1000 1000 0011
+ADD R4, R4, #2  →  0x1922  →  0001 1001 0010 0010
+                                        ↑
+                                    bit[5] = 1
+                              CPU reads bits[4:0] as imm5 = 2
+                              instead of treating bits[2:0] as SR2
+```
+
+
+
+### Complete Execution Summary
+
+```
+Cycle │ Address │  Word   │ Op         │ Key Effect
+──────┼─────────┼─────────┼────────────┼────────────────────────────────────
+  1   │ x3000   │ 0xE019  │ LEA        │ R0 ← address of PROMPT1 (0x3019)
+  2   │ x3001   │ 0xF022  │ TRAP x22   │ PUTS: prints "Enter 1st digit: "
+  3   │ x3002   │ 0xF020  │ TRAP x20   │ GETC: R0 ← ASCII of typed char
+  4   │ x3003   │ 0xF021  │ TRAP x21   │ OUT: echoes typed char
+  5   │ x3004   │ 0x224B  │ LD         │ R1 ← mem[0x3050] = 0xFFD0 (−48)
+  6   │ x3005   │ 0x1401  │ ADD (reg)  │ R2 = R0 + R1  (ASCII '5' → int 5)
+  7   │ x3006   │ 0x224... │ LD        │ R0 ← NEWLINE char
+  8   │ x3007   │ 0xF021  │ TRAP x21   │ OUT: prints '\n'
+  ... │  ...    │  ...    │ ...        │ (repeat cycles 1–8 for 2nd digit → R3)
+ 16   │ x300F   │ 0x1883  │ ADD (reg)  │ R4 = R2 + R3       (bit[5] = 0)
+ 17   │ x3010   │ 0x1922  │ ADD (imm)  │ R4 = R4 + 2        (bit[5] = 1)
+ 18   │ x3011   │ 0xE...  │ LEA        │ R0 ← address of RESULT_STR
+ 19   │ x3012   │ 0xF022  │ TRAP x22   │ PUTS: prints "Sum plus 2 is: "
+ 20   │ x3013   │ 0x22... │ LD         │ R1 ← +48 (ASCII_POS)
+ 21   │ x3014   │ 0x1...  │ ADD (reg)  │ R0 = R4 + 48  (int 10 → ASCII ':')
+ 22   │ x3015   │ 0xF021  │ TRAP x21   │ OUT: prints result char
+ 23   │ x3016   │ 0x22... │ LD         │ R0 ← NEWLINE
+ 24   │ x3017   │ 0xF021  │ TRAP x21   │ OUT: prints '\n'
+ 25   │ x3018   │ 0xF025  │ TRAP x25   │ HALT → process::exit(1)
+```
+
+
+
+### Sign Extension — Why Negative Offsets Work
+
+`sign_extend` is called on every PCoffset9 and imm5 before arithmetic:
+
+```rust
+fn sign_extend(mut x: u16, bit_count: u8) -> u16 {
+    if (x >> (bit_count - 1)) & 1 != 0 {
+        x |= 0xFFFF << bit_count;
+    }
+    x
+}
+```
+
+For a backward-jumping `PCoffset9` like `0b1_1111_1100` (= −4 in 9-bit space):
+```
+Test sign bit: (0b1_1111_1100 >> 8) & 1 = 1  → negative!
+
+0xFFFF << 9   = 1111 1110 0000 0000
+x (9-bit)     = 0000 0001 1111 1100
+
+x |= result:
+  0000 0001 1111 1100
+| 1111 1110 0000 0000
+= 1111 1111 1111 1100  = 0xFFFC = −4 in i16  ✓
+```
+
+Without this, a backward branch offset of −4 would be misread as +508, sending the PC into garbage memory.
+
+
+
+## Connection to zkVM Execution Traces
+
+Every CPU cycle traced above maps directly to a **row in a zkVM execution trace table**. For a STARK-based VM like ZP1:
+
+- The **Fetch** step fills columns: `pc`, `instruction_word`
+- The **Decode** step fills columns: `opcode` (= `instruction >> 12`), `dr`, `sr1`, `imm_flag`
+- The **Execute** step fills columns: `result`, `cond_flags`
+
+`ADD R4, R2, R3` becomes an **arithmetic constraint**: the prover must show the `result` column equals `sr1_val + sr2_val`. `ADD R4, R4, #2` becomes a structurally identical constraint, but `imm_flag = 1` routes to the `imm5` column instead of `sr2`. The condition flag update (`COND = POS`) becomes a **range-check constraint**: MSB of result must be 0 and value must be non-zero. These are exactly the kinds of constraints that LogUp lookups and ZP1's 77-column execution trace are designed to encode and prove efficiently over Circle STARKs.
+

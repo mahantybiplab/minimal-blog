@@ -1,0 +1,12 @@
+---
+export interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+---
+<span class="group relative inline-block cursor-help border-b border-dotted border-current">
+  <slot />
+  <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[calc(100vw-2rem)] sm:max-w-xs bg-menu text-foreground text-sm px-3 py-1.5 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-normal break-words border border-border mx-auto">
+    {text}
+  </span>
+</span>

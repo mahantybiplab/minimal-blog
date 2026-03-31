@@ -7,12 +7,14 @@
 --------------------------------*/
 
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, "SF Mono",
-    Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-mono:
+    "Fira Code", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* Adaptive Colors */
   --color-body: var(--bg-body);
@@ -43,12 +45,12 @@
 .dark {
   --bg-body: #0a0a12;
   --fg-body: #e3e6e8;
-  --fg-muted: rgb(209, 213, 219); 
+  --fg-muted: rgb(209, 213, 219);
   --fg-subtitle: rgb(156, 168, 180);
   --color-primary: #667eea;
   --color-logo-adaptive: rgb(128, 159, 255);
   --bg-menu: #0f0f1e;
-  --border-color: #1f2937; 
+  --border-color: #1f2937;
   --bg-card-hover: rgba(255, 255, 255, 0.05);
 }
 
@@ -59,8 +61,6 @@
   margin-top: 1rem;
   margin-bottom: 1.5rem;
 }
-
-
 
 /* ---------------------------------------------------------
    2. EXTRA STYLING
@@ -76,14 +76,15 @@
 }
 
 .dark .prose strong {
-  background: linear-gradient(90deg, #a8c8fe, #d4c4fd); 
+  background: linear-gradient(90deg, #a8c8fe, #d4c4fd);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: inherit;
 }
 
-.prose h2, .prose h3 {
+.prose h2,
+.prose h3 {
   @apply underline decoration-2 underline-offset-4 decoration-(--color-primary);
 }
 
@@ -99,18 +100,34 @@
   .dark .prose .katex-display {
     color: #f8fafc !important; /* slate-50 for dark mode */
   }
-
 }
 
 @layer utilities {
-  .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
-  .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+  .prose
+    :where(code):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    )::before,
+  .prose
+    :where(code):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    )::after {
     content: "" !important;
   }
 
   /* This prevents the generic prose color from taking over in dark mode */
   .dark .prose {
-    --tw-prose-body: inherit; 
+    --tw-prose-body: inherit;
     color: var(--color-foreground) !important;
   }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* Tailwind gray-600 */
+  border-radius: 20px;
 }

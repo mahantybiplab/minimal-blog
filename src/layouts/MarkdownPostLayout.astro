@@ -2,13 +2,14 @@
 import Prose from "../components/Prose.astro";
 import BaseLayout from "./BaseLayout.astro";
 import PostMeta from "../components/PostMeta.astro";
-const { frontmatter } = Astro.props;
+const { frontmatter, headings } = Astro.props;
 ---
+
 <BaseLayout pageTitle={frontmatter.title}>
   <Prose>
-    <div class="pr-1">
+    <div class="md:max-lg:max-w-[704px] md:max-lg:mx-auto">
       <section
-        class="relative flex items-center justify-center h-[50vh] 
+        class="relative py-20 md:py-32
                after:absolute after:bottom-0 after:left-0 after:right-0 after:h-24
                after:bg-linear-to-b after:from-transparent after:to-background after:content-['']"
       >
@@ -22,7 +23,6 @@ const { frontmatter } = Astro.props;
                    dark:bg-[radial-gradient(circle_at_center,rgba(120,120,255,0.08),transparent_100%)]
                    blur-[180px] sm:blur-[220px]"
           ></div>
-
           <div
             class="absolute w-[80vw] h-[80vh] rounded-full
                    bg-[radial-gradient(circle_at_center,rgba(240,250,255,0.12),transparent_90%)]
@@ -30,12 +30,189 @@ const { frontmatter } = Astro.props;
           ></div>
         </div>
 
-        <div class="absolute left-0 top-[5%] z-10">
+        <div class="relative max-w-275 z-10 flex flex-col justify-center">
           <PostMeta frontmatter={frontmatter} />
         </div>
       </section>
 
-      <slot />
+      <div class="pb-20 lg:flex lg:flex-row-reverse lg:items-start lg:gap-12">
+
+        {headings && headings.length > 0 && (
+          <aside class="not-prose lg:w-1/4 lg:sticky lg:top-24 mb-12 lg:mb-0 z-20">
+            <nav class="toc pt-1.75">
+
+              {/* ── Mobile accordion ── */}
+              <details
+                id="toc-details"
+                class="group bg-card-hover lg:bg-transparent border border-border lg:border-none rounded-2xl lg:rounded-none"
+              >
+                <summary class="flex items-center justify-between p-5 lg:p-0 cursor-pointer lg:pointer-events-none lg:cursor-auto list-none select-none [&::-webkit-details-marker]:hidden">
+                  <span class="text-xs uppercase tracking-widest font-semibold text-slight-gray">
+                    On this page
+                  </span>
+                  <svg
+                    class="w-5 h-5 text-slight-gray transition-transform duration-200 group-open:rotate-180 lg:hidden"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+
+                {/*
+                  Key fix: give this an explicit max-h using calc() instead of
+                  relying on flex inheritance through <details> (which browsers
+                  don't handle consistently). This guarantees overflow-y-auto
+                  actually activates on desktop.
+                  
+                  lg:top-24 = 6rem, "On this page" label ≈ 2.5rem → subtract both + buffer
+                */}
+                <div
+                  id="toc-scroll-container"
+                  class="overflow-y-auto custom-scrollbar
+                         px-5 pb-5 lg:px-0 lg:pb-0 lg:mt-4
+                         max-h-[50vh] lg:max-h-[calc(100vh-10rem)]"
+                >
+                  <div class="border-l border-border">
+                    <ul class="m-0 p-0 list-none">
+                      {headings
+                        .filter((h: any) => h.depth > 1 && h.depth <= 3)
+                        .map((heading: any) => (
+                          <li class="p-0 m-0">
+                            <a
+                              href={`#${heading.slug}`}
+                              class={[
+                                "toc-link block py-1.5 text-[0.8rem] leading-snug",
+                                "border-l-2 border-transparent -ml-px",
+                                "transition-colors duration-150",
+                                "text-slight-gray hover:text-foreground hover:border-border",
+                                heading.depth === 3 ? "pl-6" : "pl-4",
+                              ].join(" ")}
+                            >
+                              {heading.text}
+                            </a>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                </div>
+              </details>
+
+            </nav>
+          </aside>
+        )}
+
+        <div class="lg:w-3/4 min-w-0 prose-container [&>*:first-child]:mt-0">
+          <slot />
+        </div>
+      </div>
     </div>
   </Prose>
+
+  <style>
+    .toc-link,
+    .toc-link:hover,
+    .toc-link:focus,
+    .toc-link:visited {
+      text-decoration: none !important;
+    }
+  </style>
+
+  <script>
+    function setupTOCScrollSpy() {
+      const tocLinks  = Array.from(document.querySelectorAll(".toc-link"));
+      const tocContainer = document.getElementById("toc-scroll-container");
+      const headingEls   = Array.from(document.querySelectorAll("h2[id], h3[id]"));
+      const tocDetails   = document.getElementById("toc-details");
+
+      if (!tocLinks.length || !headingEls.length) return;
+
+      // ── Desktop: keep <details> open ────────────────────────────────────
+      function enforceDesktopOpen() {
+        if (window.innerWidth >= 1024 && tocDetails) {
+          tocDetails.setAttribute("open", "");
+        }
+      }
+      enforceDesktopOpen();
+      window.addEventListener("resize", enforceDesktopOpen, { passive: true });
+
+      // ── Mobile: close on link click ──────────────────────────────────────
+      tocLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth < 1024 && tocDetails) {
+            tocDetails.removeAttribute("open");
+          }
+        });
+      });
+
+      // ── Scroll spy ───────────────────────────────────────────────────────
+      const OFFSET = 120;
+      let currentActiveId: string | null = null;
+
+      function setActive(id: string) {
+        if (currentActiveId === id) return;
+        currentActiveId = id;
+
+        tocLinks.forEach((link) => {
+          const isActive = link.getAttribute("href") === `#${id}`;
+          link.classList.toggle("text-logo",          isActive);
+          link.classList.toggle("font-medium",        isActive);
+          link.classList.toggle("border-logo",        isActive);
+          link.classList.toggle("text-slight-gray",   !isActive);
+          link.classList.toggle("border-transparent", !isActive);
+        });
+
+        if (!tocContainer) return;
+        const activeLink = tocContainer.querySelector(`.toc-link[href="#${id}"]`);
+        if (!activeLink) return;
+
+        // Use scrollTop directly — avoids the race condition where smooth
+        // animation reads stale rects while the page is still scrolling.
+        //
+        // getBoundingClientRect gives viewport-relative positions, so:
+        //   linkTop - containerTop = link's current pixel offset inside the container
+        // We then adjust by current scrollTop to get the absolute scrollTop target.
+        const containerRect = tocContainer.getBoundingClientRect();
+        const linkRect      = activeLink.getBoundingClientRect();
+
+        const target =
+          tocContainer.scrollTop                     // current scroll offset
+          + (linkRect.top - containerRect.top)       // link's position relative to container
+          - tocContainer.clientHeight / 2            // centre vertically
+          + activeLink.clientHeight / 2;
+
+        tocContainer.scrollTop = target;             // instant — no smooth, no race condition
+      }
+
+      function findActiveHeading() {
+        let active = headingEls[0];
+        for (const h of headingEls) {
+          if (h.getBoundingClientRect().top <= OFFSET) {
+            active = h;
+          } else {
+            break;
+          }
+        }
+        return active ? active.id : null;
+      }
+
+      let rafId: number | null = null;
+      function onScroll() {
+        if (rafId !== null) return;
+        rafId = requestAnimationFrame(() => {
+          const id = findActiveHeading();
+          if (id) setActive(id);
+          rafId = null;
+        });
+      }
+
+      window.removeEventListener("scroll", onScroll);
+      window.addEventListener("scroll", onScroll, { passive: true });
+
+      const initial = findActiveHeading();
+      if (initial) setActive(initial);
+    }
+
+    document.addEventListener("DOMContentLoaded", setupTOCScrollSpy);
+    document.addEventListener("astro:page-load", setupTOCScrollSpy);
+  </script>
 </BaseLayout>
