@@ -1,11 +1,13 @@
 ---
-title: "Sneaky Header Blocker Trick"
-subtitle: "One of the coolest transitions on this blog. ✨"
+title: "The Complete LC-3 Execution Lifecycle: From Assembly to CPU Registers"
+subtitle: "From .asm to execution: A visual deep-dive into the LC-3 lifecycle. ✨"
 pubDate: 2026-03-30
 description: "A deep-dive into the end-to-end lifecycle of an LC-3 program — covering the two-pass assembler, binary object file structure, VM loader, and the Fetch-Decode-Execute CPU loop, all traced through a concrete add.asm example."
 author: "Biplab Mahanty"
-tags: ["lc3", "virtual-machine", "rust", "systems-programming", "assembly"]
+tags: ["systems-programming", "computer-architecture", "virtual-machine", "rust", "assembly"]
 ---
+import Tooltip  from "../../components/Tooltip.astro";
+
 
 **From Source Text → Binary Object → Memory → CPU Registers**
 
@@ -77,7 +79,8 @@ This program reads two single-digit numbers from the keyboard, converts them fro
 
 ## Phase 1 — The Assembler: Text → Binary
 
-The assembler translates the `.asm` source into a `.obj` binary in exactly **two passes**.
+
+The <Tooltip text="A program that converts assembly language code into machine code.">assembler</Tooltip> translates the `.asm` source into a `.obj` binary in exactly **two passes**.
 
 
 
