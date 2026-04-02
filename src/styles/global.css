@@ -131,3 +131,55 @@
   background-color: #4b5563; /* Tailwind gray-600 */
   border-radius: 20px;
 }
+
+
+/* Code blocks */
+pre {
+  white-space: pre !important;
+  word-wrap: normal !important;
+  word-break: normal !important;
+  overflow-x: auto !important;
+
+  /* Tighter, more readable on mobile */
+  font-size: 0.72rem;
+  line-height: 1.6;
+
+  /* Breathing room inside the block */
+  padding: 1rem !important;
+  border-radius: 0.5rem;
+
+  /* Subtle border to frame it */
+  border: 1px solid rgba(120, 120, 255, 0.15);
+}
+
+@media (min-width: 640px) {
+  pre {
+    font-size: 0.875rem;
+    padding: 1.25rem !important;
+  }
+}
+
+/* Scrollbar — visible but unobtrusive */
+pre::-webkit-scrollbar {
+  height: 5px;
+}
+pre::-webkit-scrollbar-track {
+  background: rgba(120, 120, 255, 0.05);
+  border-radius: 10px;
+}
+pre::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 255, 0.35);
+  border-radius: 10px;
+}
+pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 120, 255, 0.6);
+}
+
+/* Inline code — also needs love on mobile */
+:not(pre) > code {
+  font-size: 0.78em;
+  padding: 0.15em 0.4em;
+  border-radius: 0.3rem;
+  background: rgba(120, 120, 255, 0.1);
+  word-break: break-word; /* inline code can wrap */
+}

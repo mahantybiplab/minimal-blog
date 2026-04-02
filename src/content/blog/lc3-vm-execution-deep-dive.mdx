@@ -383,6 +383,7 @@ Hex:       0x1922
 **The critical contrast between both encodings:**
 
 ```
+
 Instruction      │ Hex    │ Binary
 ─────────────────┼────────┼──────────────────
 ADD R4, R2, R3   │ 0x1883 │ 0001 1000 1000 0011
@@ -400,6 +401,7 @@ The trade-off: immediate mode saves a register load, but the literal is capped a
 `LD` loads a value from a memory address computed relative to the **already-incremented PC**. PC is already-incremented because in the LC-3 fetch–execute cycle, the CPU increments the PC during the fetch stage so it already points to the next instruction before the current instruction (like LD) is executed.
 
 ```
+
 // In LC-3:
 Effective Address = PC (after increment) + PCoffset
 ```
@@ -770,6 +772,7 @@ PC   = 0x3005
 >`sign_extend` is called on every PCoffset9 and imm5 before arithmetic:
 >
 >```rust
+>
 >fn sign_extend(mut x: u16, bit_count: u8) -> u16 {
 >    if (x >> (bit_count - 1)) & 1 != 0 {
 >        x |= 0xFFFF << bit_count;
@@ -781,6 +784,7 @@ PC   = 0x3005
 > For a backward-jumping `PCoffset9` like `0b1_1111_1100` (= −4 in 9-bit space):
 >
 > ```
+>
 > Test sign bit: (0b1_1111_1100 >> 8) & 1 = 1  → negative!
 >
 > 0xFFFF << 9   = 1111 1110 0000 0000
