@@ -1,0 +1,865 @@
+---
+title: "FibonacciSq STARK — Complete Explainer"
+subtitle: "A complete walkthrough of a FibonacciSq STARK — from execution trace and constraint polynomials to FRI commitment, decommitment, and verification."
+pubDate: 2026-04-24
+description: A deep-dive into a FibonacciSq STARK. Trace a computation through finite field arithmetic, polynomial constraints, FRI layers, and Fiat-Shamir to a fully verified proof.
+author: "Biplab Mahanty"
+tags: ["zero-knowledge", "cryptography", "stark", "rust", "finite-fields"]
+---
+
+import Tooltip from "../../components/Tooltip.astro";
+
+> [!tip] **How to get the most out of this blog**
+>
+> - **Don't rush the math.** The sections on Finite Fields, Polynomials, and Multiplicative Subgroups are the foundation. If you understand those, the rest of the STARK protocol is just applying them sequentially.
+> - **Follow the code.** If you want to see how these equations look in practice, keep an eye out for the code snippets and component maps.
+> - **Use the Glossary.** STARKs introduce a lot of jargon. If you lose track of what a *coset* or a *zerofier* is, jump to the glossary at the bottom.
+
+## FibonacciSq STARK Explorer
+
+To get a hands-on intuition for how this works, I built an interactive [FibonacciSq STARK Explorer](https://stark-fib.pages.dev/). It runs the complete proof generation and verification lifecycle directly in your browser—outputting a detailed log from building the execution trace and 11 FRI layers to verifying Merkle paths and constraint quotients.
+
+The full source code for the explorer is available on GitHub: [github.com/mahantybiplab/fibonaccisq-stark-explorer](https://github.com/mahantybiplab/stark-fib).
+
+## The Big Picture: What Problem Are We Solving?
+
+Start with the claim:
+
+> _"I know a starting value X = 3141592 such that running `a[n] = a[n-1]² + a[n-2]²` from `a[0]=1, a[1]=X` gives `a[1022] = 2338775057`."_
+
+The obvious way to check this: recompute every element of the execution trace yourself. But what if the trace had a billion elements? You'd spend a billion operations just to verify someone else's work.
+
+A STARK flips this:
+
+- The **prover** runs the computation and encodes it as a polynomial, then commits to it cryptographically — O(n log n) total.
+- The **verifier** mathematically spot-checks just 3 random positions in the expanded domain instead of replaying the entire trace — combined with the FRI layer checks, this achieves O(log² n) verification.
+
+That asymmetry — expensive to prove, cheap to verify — is the entire point. The verifier never sees the full trace; they simply check a handful of random spots. A fake proof cannot survive that random cross-examination.
+
+**The math makes cheating detectable, not the prover's honesty.**
+
+---
+
+## The Math You Actually Need
+
+### Finite Fields: Arithmetic in a Closed Universe
+
+All numbers in this system live modulo a prime:
+
+```
+
+p = 3 × 2^30 + 1 = 3221225473
+```
+
+Think of it as a number system with exactly `p` elements: `{0, 1, 2, ..., p-1}`. Addition, subtraction, multiplication all wrap around modulo p. Most importantly: **every non-zero element has a multiplicative inverse**, so you can divide exactly — just like real numbers, but finite.
+
+This prime is special because it's of the form `k × 2^n + 1`. That structure guarantees the existence of multiplicative subgroups of size exactly `2^k` — which is what makes FFT possible.
+
+**Fermat's little theorem** gives us the inverse: `a⁻¹ = a^(p-2) mod p`. In practice, the extended Euclidean algorithm is faster and it is used in our code.
+
+### Polynomials: The Language of Constraints
+
+A polynomial `f(x) = c₀ + c₁x + c₂x² + ... + cₙxⁿ` where every coefficient lives in our finite field.
+
+Two facts that everything else builds on:
+
+1. **Roots divide cleanly.** If `f(a) = 0`, then `(x - a)` divides `f(x)` with zero remainder. No fractions, no leftover — it divides _exactly_.
+2. **Unique interpolation.** Any `d+1` distinct points determine exactly one polynomial of degree ≤ d. Give me 1024 (x, y) pairs, I can recover the unique degree-1023 polynomial through them.
+
+These two facts are why polynomial constraints work: if a polynomial should be zero at certain points, and it is, then it's divisible by the <Tooltip text="Polynomial whose roots are exactly the points where a constraint must hold">zerofier</Tooltip> at those points — with zero remainder. The verifier checks for that exact divisibility.
+
+### Multiplicative Subgroups: The Right Domain
+
+> [!info]- **The Architecture of Finite Field Groups**
+> A **group** is a set with one operation satisfying three rules: combining any two elements stays inside the set (closure), there is a neutral element that changes nothing (identity), and every element has an inverse that undoes it.
+>
+> _Example:_ The integers modulo 7 under addition: `{0, 1, 2, 3, 4, 5, 6}`. Adding any two elements and reducing mod 7 stays inside the set. 0 is the identity. Every element has an additive inverse: `3 + 4 = 7 ≡ 0`, so 4 is the inverse of 3.
+>
+> ---
+>
+> A **subgroup** is a group living entirely inside a larger group — self-contained, obeying all the same rules. Multiplying any two elements of the subgroup never escapes it.
+>
+> _Example:_ Take `ℤ/7ℤ` under addition. The set `{0, 3, 6, 2, 5, 1, 4}` is the whole group. But `{0, 2, 4, 6}` — the even residues mod 8 in `ℤ/8ℤ` — forms a subgroup: `2+2=4`, `2+4=6`, `4+4=0 mod 8`. It never escapes. `{1, 2, 4}` in `ℤ/7ℤ×` (multiplicative) is another: `2×2=4`, `2×4=8≡1`, `4×4=16≡2` — stays inside.
+>
+> ---
+>
+> The **multiplicative group** `𝔽×` is what you get when you take a finite field and remove zero. The remaining elements under multiplication always form a group — every non-zero element has a multiplicative inverse because `p` is prime.
+>
+> _Example:_ `𝔽₇× = {1, 2, 3, 4, 5, 6}` under multiplication mod 7. Check closure: `3 × 5 = 15 ≡ 1 mod 7` — still inside. Check inverses: `2⁻¹ = 4` because `2 × 4 = 8 ≡ 1 mod 7`. The identity is 1.
+>
+> ---
+>
+> A **generator** `g` of a cyclic group is an element whose successive powers produce every element in the group before returning to 1.
+>
+> _Example:_ In `𝔽₇×`, try `g = 3`:
+>
+> ```
+>
+> 3⁰ = 1
+> 3¹ = 3
+> 3² = 9  ≡ 2
+> 3³ = 27 ≡ 6
+> 3⁴ = 81 ≡ 4
+> 3⁵ = 243 ≡ 5
+> 3⁶ = 729 ≡ 1  ← back to 1
+> ```
+>
+> Every element `{1, 2, 3, 4, 5, 6}` appears exactly once. So 3 is a generator of `𝔽₇×`.
+>
+> Now try `g = 2`:
+>
+> ```
+>
+> 2⁰ = 1,  2¹ = 2,  2² = 4,  2³ = 1  ← cycles after 3 steps
+> ```
+>
+> Only `{1, 2, 4}` appear — 2 generates a _subgroup_ of size 3, not the whole group. Not every element is a generator.
+>
+> ---
+>
+> A **primitive n-th root of unity** `ω` is an element where `ωⁿ = 1` and no smaller power does. It generates a multiplicative subgroup of size exactly `n`.
+>
+> _Example:_ In `𝔽₇×`, find a primitive 3rd root of unity — an element where `ω³ = 1` but `ω¹ ≠ 1` and `ω² ≠ 1`. From above, `2³ ≡ 1 mod 7` and `2¹ ≠ 1`, `2² ≠ 1`. So `ω = 2` is a primitive 3rd root of unity. It generates `{1, 2, 4}` — a subgroup of size exactly 3.
+>
+> Check: `4³ = 64 ≡ 1 mod 7`, and `4¹ ≠ 1`, `4² ≠ 1` — so `ω = 4` also works. Two primitive 3rd roots of unity, one subgroup.
+>
+> ---
+
+The non-zero elements of `𝔽_p` form a cyclic group of order `p-1 = 3 × 2^30`. Because `2^30` divides `p-1`, there exist subgroups of size `2^k` for any `k ≤ 30`.
+
+> [!info]- **Existence of Power-of-2 Subgroups**
+> A core theorem in algebra states that the multiplicative group of _any_ finite field is always **cyclic**.
+>
+> Let $p = 3 \cdot 2^{30} + 1$.
+> The multiplicative group $\mathbb{F}^\times$ has order:
+> $$ |\mathbb{F}^\times| = p - 1 = 3 \cdot 2^{30} $$
+>
+> **By the Fundamental Theorem of Cyclic Groups, for any divisor $d$ of $|\mathbb{F}^\times|$, there exists a unique subgroup of order $d$.**
+>
+> Let our desired subgroup size be $d = 1024 = 2^{10}$.
+> Since $2^{10}$ perfectly divides $3 \cdot 2^{30}$, a unique subgroup of size 1024 is guaranteed to exist.
+>
+> To find the generator $\omega$ for this subgroup, we exponentiate the field's main generator $g$ :
+> $$ \omega = g^{\frac{|\mathbb{F}^\times|}{d}} = g^{\frac{3 \cdot 2^{30}}{2^{10}}} = g^{3 \cdot 2^{20}} $$
+
+We use the subgroup of size **1024**:
+
+```
+
+w = 5^((p-1)/1024)   ← a primitive 1024th root of unity
+G = {ω^0, ω^1, ..., ω^1023}
+```
+
+Every element of G is of the form `ω^i` for `i ∈ {0, 1, ..., 1023}`. By definition, `ω` is a primitive 1024th root of unity, so `ω^1024 = 1`. Plug any element `ω^i` into `x^1024 - 1`:
+
+```
+
+(ω^i)^1024 - 1 = ω^(i×1024) - 1 = (ω^1024)^i - 1 = 1^i - 1 = 0
+```
+
+Every element of G makes `x^1024 - 1` evaluate to zero — so every element of G is a root of it. Since this is a degree-1024 polynomial and G has exactly 1024 elements, G accounts for _all_ of its roots. This means it factors completely as:
+
+```
+
+x^1024 - 1 = (x - ω⁰)(x - ω¹)(x - ω²)···(x - ω^1023)
+```
+
+**Why this matters:** To say "this expression must be zero at every point in G", you'd normally need to write out all 1024 linear factors. Instead you just write `x^1024 - 1` — one compact polynomial encoding all 1024 roots. The zerofier for the transition constraint is built by dividing out the specific roots where the constraint _doesn't_ need to hold:
+
+```
+
+Z(x) = (x^1024 - 1) / ((x - ω^1021)(x - ω^1022)(x - ω^1023))
+```
+
+This works cleanly — no remainder — precisely because those three linear factors are already present in the factorization of `x^1024 - 1`.
+`x^1024 - 1` vanishes on all 1024 subgroup points — including `ω^1021`, `ω^1022`, and `ω^1023`, where the recurrence doesn't need to hold (there aren't two successors to check). Dividing out those three linear factors removes exactly those three roots, leaving a polynomial that vanishes on the remaining 1021 points — precisely where the recurrence must hold.
+
+### FFT: Interpolation in O(n log n)
+
+Given 1024 (x, y) pairs, naive Lagrange interpolation takes O(n²) operations. When the x-values are powers of a root of unity — exactly our subgroup G — the **Fast Fourier Transform** does it in O(n log n). The code uses an iterative Cooley-Tukey FFT with bit-reversal permutation.
+
+---
+
+## Phase 1 — Building and Committing the Trace
+
+### `stark::prove()`
+
+The prover starts. Everything until the verifier runs is the prover's work.
+
+---
+
+### `Building execution trace`
+
+```
+
+t[0]    = 1
+t[1]    = 3141592          ← the secret X
+t[n]    = t[n-2]² + t[n-1]²   for n = 2..1022
+```
+
+This produces 1023 values. We append one zero to reach 1024 — the next power of 2 — so the trace fits neatly in the subgroup and FFT works without special cases.
+
+> **Why not just use 1023?** The subgroup size must be a power of 2 for FFT. Keeping the trace length equal to the subgroup order (both 1024) avoids an awkward mismatch.
+
+---
+
+### `Interpolating trace polynomial f(x) over subgroup G (|G|=1024)`
+
+We treat the 1024 trace values as evaluations of an unknown polynomial `f` at the 1024 subgroup points:
+
+```
+
+f(ω^i) = t[i]   for i = 0, 1, ..., 1023
+```
+
+The iFFT recovers the unique polynomial `f` of degree ≤ 1023 passing through all these points.
+
+Why do this? Because an array of 1024 numbers is hard to reason about. A polynomial is not — you can evaluate it anywhere, compose it with itself, divide it by other polynomials. The recurrence `t[n] = t[n-2]² + t[n-1]²` becomes a single polynomial equation that encodes all 1020 transition steps simultaneously:
+
+```
+
+f(ω²·x) = f(ω·x)² + f(x)²   for all x ∈ G \ {ω^1021, ω^1022, ω^1023}
+```
+
+One equation. All steps. That compression is what makes STARKs succinct.
+
+---
+
+### `LDE: evaluating f over coset D (|D|=8192, blowup=8)`
+
+**LDE = Low-Degree Extension.**
+
+We interpolate f over G (1024 points) to recover the polynomial, then evaluate it on a much larger domain D of 8192 points — 8 times bigger. D is a **coset** of a larger subgroup:
+
+```
+
+D = g · H   where g = 5 (generator), H = subgroup of size 8192
+```
+
+The coset shift `g` keeps D and G completely disjoint. This is a security requirement — the evaluation domain must never overlap the constraint domain.
+
+> The blowup factor (8×) is the primary dial for soundness. A fake polynomial of degree d differs from the honest one on at least `8d - d = 7d` of the 8d domain points — so a random query hits a "bad" point with probability ≤ 1/8. With 3 independent queries: `(1/8)³ = 1/512 ≈ 0.2%` soundness error. A deeper treatment is in the follow-up post.
+
+### `Committing f_lde_merkle root → channel`
+
+At this point the prover has 8192 evaluations of `f` on D. They need to commit to these values — lock them in cryptographically before receiving any verifier challenges — so they cannot retroactively adjust an evaluation after seeing which positions the verifier will query.
+The naive commit: send all 8192 values. But that's 8192 field elements transmitted upfront, and the verifier would need to store all of them. We need something smaller — a single fingerprint that commits to all 8192 values at once, but still allows the prover to later prove any individual value is genuine without sending everything.
+That's exactly what a Merkle tree gives you.
+
+---
+
+We build a **Merkle tree** over all 8192 evaluations of `f` on D.
+
+A Merkle tree is a binary hash tree. The 8192 evaluations sit at the leaves — each leaf is a hash of one evaluation value. Moving up, each internal node is a hash of its two children. At the very top sits a single 32-byte value — the **root** — that is a cryptographic fingerprint of all 8192 values simultaneously.
+
+```
+
+              Root
+            /      \
+        H_left    H_right
+        /    \    /    \
+      ...   ...  ...   ...
+      /\    /\   /\    /\
+    f₀ f₁ f₂ f₃ ...  f₈₁₉₁
+```
+
+The prover sends this root to the channel. At this point they are **locked in** — the root is a commitment to every evaluation. Changing even one value would cascade up the tree and produce a completely different root, which would no longer match what's already in the transcript.
+
+Later, the verifier queries a specific position `d_i` in the domain: _"what is `f` at this point?"_ The prover answers with `v = f(d_i)` — but the verifier needs to be sure this isn't a value the prover fabricated after seeing the query. This is where the tree earns its purpose.
+
+The key property: **selective opening**. To prove `f(d_i) = v` is genuine, the prover reveals just 13 sibling hashes — one per level of the tree — called an **authentication path**. The verifier hashes upward through those siblings from the leaf all the way to the root. If the result matches the committed root, the value is genuine.
+
+**Why only 13 hashes?** Consider a tiny tree with 4 leaves:
+
+```
+         Root
+        /    \
+      H_AB   H_CD
+      / \    / \
+     A   B  C   D
+```
+
+To prove leaf `A` is genuine, you don't reveal B, C, and D. You reveal:
+
+- `B` — so the verifier computes `H_AB = hash(A, B)`
+- `H_CD` — so the verifier computes `Root = hash(H_AB, H_CD)`
+
+If the result matches the committed root, `A` is genuine. Only 2 hashes for 4 leaves — `log₂(4) = 2`.
+
+Scale this up: 8192 leaves → tree of depth 13 → 13 sibling hashes per opening. The binary structure keeps it logarithmic — doubling the dataset adds exactly one more level, one more hash. A tree over a billion leaves would need only 30 hashes to verify any single leaf.
+
+---
+
+## Phase 2 — The Composition Polynomial
+
+### `Deriving α₀, α₁, α₂ from channel state`
+
+After committing the root, the prover needs random challenges α₀, α₁, α₂. But there's no interactive verifier here — so we use the **Fiat-Shamir heuristic**: derive the challenges deterministically from everything the prover has sent so far.
+
+That "everything sent so far" is the transcript — the ordered list of all messages the prover has committed to: in this case, just the `f_lde_merkle_root`. As the proof progresses, the transcript grows — each new commitment (`cp_lde_merkle_root`, `FRI layer roots`) is appended to it. Hashing the transcript at any point gives a pseudorandom value that neither party could have predicted before the commitments were made.
+
+```
+
+state = SHA256(state || f_merkle_root)
+α₀    = state mod p
+state = SHA256(state)          ← advance so α₁ is different
+α₁    = state mod p
+...
+```
+The prover committed to the `f_lde_merkle_root` before seeing the alphas, so they cannot choose the root to manipulate the challenges. This is the non-interactive equivalent of a verifier shouting a random number after seeing the commitment.
+
+---
+
+### `Building composition polynomial CP(x)`
+
+We encode three constraints as polynomial divisibility checks.
+
+#### Why divisibility?
+
+If a polynomial `f` satisfies a constraint at a set of points S, then `f - (the constraint target)` vanishes at every point in S. By the root-divisibility fact from earlier, it's exactly divisible by the zerofier Z(x) — the polynomial whose roots are exactly S. If the constraint is violated at even one point, the division leaves a remainder, and `q = numerator/Z` is no longer a polynomial.
+
+The verifier checks polynomiality. That's it. That's the whole constraint system.
+
+#### Constraint 0 — Boundary at start: `f(ω^0) = 1`
+
+```
+
+q₀(x) = (f(x) - 1) / (x - 1)
+```
+
+If `f(1) = 1`, the numerator vanishes at `x=1`, so `(x-1)` divides it exactly → `q₀` is a polynomial.  
+If `f(1) ≠ 1`, the division has a remainder → `q₀` is not a polynomial → the verifier catches it.
+
+#### Constraint 1 — Boundary at end: `f(ω^1022) = 2338775057`
+
+```
+
+q₁(x) = (f(x) - 2338775057) / (x - g^1022)
+```
+
+Same logic. This pins the output of the computation.
+
+**Degree:** numerator has degree 1023, denominator degree 1 → `deg(q₁) = 1022`.
+
+#### Constraint 2 — Transition: `f(ω²·x) = f(ω·x)² + f(x)²`
+
+
+> [!info]- **How did we come up with** `f(ω²·x) = f(ω·x)²  + f(x)²`
+> The recurrence is:
+> ```
+> a[n] = a[n-1]² + a[n-2]²
+> ```
+> 
+> We have a polynomial `f` where `f(ωⁿ) = a[n]`. Substitute directly:
+> 
+> ```
+> f(ωⁿ) = f(ω^(n-1))² + f(ω^(n-2))²
+> ```
+> 
+> Now factor. Notice:
+> ```
+> ωⁿ     = ω² · ω^(n-2)
+> ω^(n-1) = ω  · ω^(n-2)
+> ω^(n-2) = ω^(n-2)
+> ```
+> 
+> Set `x = ω^(n-2)`:
+> 
+> ```
+> f(ω²·x) = f(ω·x)² + f(x)²
+> ```
+> 
+> Reading it back as the original recurrence:
+> ```
+> a[n]   = a[n-1]²  + a[n-2]²
+>   ↕         ↕           ↕
+> f(ω²·x) = f(ω·x)²  + f(x)²
+> ```
+> 
+> Every term maps exactly:
+> - `f(x)` — you are standing at position `n-2` in the trace
+> - `f(ω·x)` — one step forward: position `n-1`
+> - `f(ω²·x)` — two steps forward: position `n`
+> 
+> Multiplying `x` by `ω` is the polynomial way of saying "move one step forward in the trace" — because the trace is laid out as evaluations at `ω^0, ω^1, ω^2, ...` in order.
+
+
+The recurrence must hold at `ω^0, ω^1, ..., ω^1020` — 1021 points. The numerator encodes the violation at any point:
+
+```
+
+numerator₂(x) = f(ω²·x) - f(ω·x)² - f(x)²
+```
+
+If the recurrence holds everywhere it should, this is zero at exactly `ω^0, ω^1, ..., ω^1020`. The zerofier for exactly those 1021 points is:
+
+```
+
+Z(x) = (x^1024 - 1) / ((x - ω^1021)(x - ω^1022)(x - ω^1023))
+```
+
+`x^1024 - 1` vanishes on all 1024 subgroup points. Dividing out the three points where the recurrence doesn't hold — `ω^1021`, `ω^1022`, `ω^1023` — leaves a polynomial with exactly 1021 roots, of degree 1021.
+
+```
+
+q₂(x) = numerator₂(x) / Z(x)
+```
+
+**Degree:**
+```
+
+deg(f(x))   = 1023                  ← interpolated through 1024 points
+deg(f(x)²)  = 2 × 1023 = 2046      ← squaring the trace polynomial
+deg(f(ω·x)) = 1023                  ← shifting evaluation point doesn't change degree
+deg(numerator₂) = 2046              ← dominated by the squared terms
+deg(Z)      = 1021
+deg(q₂)     = 2046 - 1021 = 1025
+```
+
+**Why does shifting not change the degree?** `f(ω·x)` is just `f` evaluated at a scaled input — it's still a degree-1023 polynomial in `x`. Squaring it gives degree 2046. The subtraction `f(ω²·x) - f(ω·x)² - f(x)²` is dominated by the degree-2046 squared terms.
+
+#### The Linear Combination
+
+```
+
+CP(x) = α₀·q₀(x) + α₁·q₁(x) + α₂·q₂(x)
+deg(CP) = max(1022, 1022, 1025) = 1025
+```
+
+The random alphas are the glue. Without them, a cheating prover could craft a fake `f` that satisfies two constraints but violates the third — then cancel the violation using the linear combination. With random alphas, any single violated constraint contaminates `CP` almost everywhere (Schwartz-Zippel: two distinct degree-d polynomials agree at at most d out of p ≈ 3 billion points).
+
+---
+
+### `Committing cp_lde_merkle root → channel`
+
+We evaluate CP on the same 8192-point domain D, build another Merkle tree, and commit the root. The prover is now locked into both `f` and `CP`.
+
+---
+
+## Phase 3 — FRI: Proving CP is Low-Degree
+
+### Why We Need FRI
+
+The verifier needs to be convinced that `CP` has degree ≤ 1025. But they can't check all 8192 evaluations — that's O(n) work, defeating the purpose.
+
+The insight behind FRI: **a genuine low-degree polynomial, when "folded" with a random challenge, produces another low-degree polynomial of half the degree.** Fold 11 times, and a degree-1025 polynomial collapses to a constant. If the function was _not_ low-degree, the folding breaks down — detectable at a random point.
+
+### The Folding Operation
+Here's the full updated folding operation section:
+
+---
+
+### The Folding Operation
+
+The core idea: a degree-1025 polynomial is too large to check directly. But if you could somehow *halve* its degree while preserving the information you care about, and keep halving until you reach a constant — that's checkable in one step.
+
+But why does reaching a constant *prove* anything?
+
+If CP genuinely has degree ≤ 1025, then folding it 11 times with the right betas will always converge to a constant — that's just what polynomial degree halving does. A degree-1025 polynomial folded once gives degree ≤ 512, folded again gives ≤ 256, and so on until degree 0 — a constant.
+
+Now think about what a cheating prover faces. They want to convince the verifier that their fake CP — which is *not* low-degree because it encodes a false computation — folds down to a constant. 
+
+If the polynomial being folded is higher degree than claimed — because it encodes a false computation — the fold doesn't compress it. The output stays high-degree and never converges to a constant.
+
+So the verifier's strategy is: *"does this fold correctly at a random position, layer by layer, all the way to a constant?"* A genuine low-degree polynomial passes with probability 1. 
+A fake high-degree polynomial fails at some layer with overwhelming probability — because for each layer, the folding equation only holds at a tiny fraction of query positions `x`. The verifier's randomly chosen query position is overwhelmingly likely to land where the fake fold breaks down.
+
+That's why we fold all the way to a constant — it's the one value that's trivially checkable and that a high-degree polynomial cannot fake across 11 consecutive random challenges simultaneously.
+
+
+> [!info]- Reaching Production Security: The 128-Bit Guarantee
+> 
+> The folding equation is:
+> 
+> ```
+> 
+> f_next(x²) = (f(x) + f(-x))/2 + β · (f(x) - f(-x))/(2x)
+> ```
+> 
+> For a genuine degree-d polynomial, this holds at **every** point in the domain — because `f_next` was constructed by the honest fold. There are no exceptions.
+> 
+> For a fake polynomial — one that isn't genuinely degree-d — `f_next` was not constructed by an honest fold. The prover chose `f_next` to pass the Merkle commitment check, but they couldn't make the folding equation hold everywhere simultaneously. Why? Because making the folding equation hold everywhere is equivalent to being a genuine degree-d/2 polynomial — which is exactly what the fake prover is trying to avoid admitting.
+> 
+> So the fake `f_next` satisfies the folding equation at some positions and violates it at others. How many positions does it violate? By the Schwartz-Zippel lemma, two distinct degree-d polynomials can agree at at most d points out of the entire domain. The domain has 8192 points at layer 0, 4096 at layer 1, and so on. The degree is at most 1025. So the fraction of positions where the fake fold accidentally satisfies the equation is at most:
+> 
+> ```
+> 
+> 1025 / 8192 ≈ 1/8   ← at layer 0
+> ```
+> 
+> The verifier picks one random position. The probability of landing on a position where the fake fold holds is at most 1/8 per layer. Across 11 layers and 3 queries, the probability that the cheat goes undetected at every single check is:
+> 
+> ```
+> 
+> (1/8)³ ≈ 0.2%
+> ```
+> 
+> That's the soundness error — not trust, not assumption, but a direct consequence of how rarely two distinct polynomials can agree.
+> 
+> **Wait, is 0.2% secure enough?**
+> 
+> In cryptography, a 0.2% chance of a forgery passing is a catastrophic risk. The 3 queries above are just an educational toy model. To reach the industry standard of 128 bits of security (a 1 in 2128 chance of a fake proof passing), a production STARK simply turns the dial up. At an 8x blowup factor, the verifier just runs the spot-check 43 times instead of 3. It costs the verifier a fraction of a millisecond of extra hashing, but it crushes the probability of a forgery down to absolute zero.
+> 
+
+---
+
+### How the Fold Works
+
+**Step 1: Split f(x) into two halves**
+
+Any polynomial can be split into its even-indexed and odd-indexed coefficients:
+
+```
+
+f(x) = c₀ + c₁x + c₂x² + c₃x³ + c₄x⁴ + c₅x⁵ + ...
+```
+
+Group even and odd terms separately:
+
+```
+
+even terms: c₀ + c₂x² + c₄x⁴ + ...
+odd terms:  c₁x + c₃x³ + c₅x⁵ + ...
+```
+
+Factor `x` out of the odd group:
+
+```
+
+odd terms = x · (c₁ + c₃x² + c₅x⁴ + ...)
+```
+
+Now define two polynomials in `y = x²`:
+
+```
+
+f_even(y) = c₀ + c₂y + c₄y² + ...   ← even-indexed coefficients
+f_odd(y)  = c₁ + c₃y + c₅y² + ...   ← odd-indexed coefficients, after factoring out x
+```
+
+Substitute `y = x²`:
+
+```
+
+f(x) = f_even(x²) + x · f_odd(x²)
+```
+
+Both `f_even` and `f_odd` are polynomials in `x²` — their degree is at most `deg(f)/2`.
+
+---
+
+**Step 2: Fold with a random challenge β**
+
+The verifier sends a random `β`. The prover combines the two halves:
+
+```
+
+f_next(y) = f_even(y) + β · f_odd(y)   where y = x²
+```
+
+`f_next` has degree ≤ `deg(f)/2` — half the original. The domain also halves: `x` ranged over 8192 points, `y = x²` ranges over 4096 points.
+
+This is one fold: one polynomial of degree d, over a domain of size n, becomes one polynomial of degree d/2, over a domain of size n/2.
+
+---
+
+**Step 3: Why the verifier can check this with just two values**
+
+Notice what happens when you evaluate `f` at `x` and `-x`:
+
+```
+
+f(x)  = f_even(x²) + x  · f_odd(x²)
+f(-x) = f_even(x²) - x  · f_odd(x²)   ← sign flips because (-x) · f_odd
+```
+
+Add them:
+```
+
+f(x) + f(-x) = 2 · f_even(x²)
+→ f_even(x²) = (f(x) + f(-x)) / 2
+```
+
+Subtract them:
+```
+
+f(x) - f(-x) = 2x · f_odd(x²)
+→ f_odd(x²)  = (f(x) - f(-x)) / (2x)
+```
+
+Substitute back into `f_next`:
+```
+
+f_next(x²) = f_even(x²)        + β · f_odd(x²)
+           = (f(x) + f(-x))/2  + β · (f(x) - f(-x))/(2x)
+```
+
+The verifier only needs `f(x)` and `f(-x)` — two values from the current layer — to verify the entire folding equation. They already know `β` from the transcript, and the next layer's value at `x²` was committed by the prover. So the check is:
+
+```
+
+(f(x) + f(-x))/2 + β · (f(x) - f(-x))/(2x)  ==  f_next(x²)
+```
+
+If this holds, this fold was done honestly.
+
+> [!info]- **Why are `f(x)` and `f(-x)` called siblings?**
+>In the evaluation domain, points naturally pair up as `(x, -x)` — they share the same square `x²`. In the Merkle tree over the domain, these two points sit exactly half the domain apart:
+>
+>```rust
+>
+> let cur_idx = idx % length;
+> let sib_idx = (cur_idx + length / 2) % length;   ← this is -x
+> ```
+> 
+> That's the sibling pair the prover opens at each layer.
+> You got it. No analogies, just the raw finite field algebra. 
+> 
+> Here is the concrete mathematical proof of why adding `length / 2` to an array index is exactly the same operation as multiplying by $-1$.
+> 
+> ### The Math
+> Your evaluation domain of 8,192 points is built by taking a generator (let's call it $\omega$) and raising it to increasing powers: $\omega^0, \omega^1, \omega^2 \dots$
+> 
+> Because the domain has exactly 8,192 points, it wraps around at the end. Mathematically, this means:
+> $$\omega^{8192} = 1$$
+> 
+> Now, what is the value of the element exactly halfway through the domain, at $\omega^{4096}$? Let's figure it out by squaring it:
+> $$(\omega^{4096})^2 = \omega^{8192} = 1$$
+> 
+> In a finite field, just like in regular math, if a number squared equals $1$, that number can only be **$1$** or **$-1$**. Because it is only halfway through the sequence, it hasn't reached $1$ yet. Therefore, it is a hard mathematical fact that:
+> $$\omega^{4096} = -1$$
+> 
+> ### Translating Math to Code
+> Let's look at your array indices again. The verifier queries index `500`. 
+> * The value at index `500` is exactly $\omega^{500}$.
+> * The sibling index is `500 + 4096`. 
+> 
+> Let's do the algebra on that sibling index:
+> $$\omega^{500 + 4096} = \omega^{500} \cdot \omega^{4096}$$
+> 
+> Substitute the $-1$ we just proved:
+> $$\omega^{500} \cdot (-1) = -\omega^{500}$$
+> 
+> By shifting the array index by `4096`, you are literally multiplying the underlying field element by $-1$. That is why they are mathematically perfect siblings for the $f(x)$ and $f(-x)$ fold!
+---
+
+**The full picture per FRI layer:**
+
+```
+
+Prover opens:    f(x) at cur_idx,   f(-x) at sib_idx
+Verifier has:    β from transcript,  f_next(x²) from next layer commitment
+Verifier checks: (f(x) + f(-x))/2 + β·(f(x) - f(-x))/(2x)  ==  f_next(x²)
+```
+
+This check runs for all 11 layers. If it passes everywhere at the randomly chosen position, the verifier is convinced that each fold was done honestly — and therefore that the original CP genuinely has degree ≤ 1025.
+
+### The 11 FRI Layers
+
+```
+
+Layer  0 — CP(x)    | deg < 1026 | |D| = 8192 | CP commitment
+Layer  1 — CP₁(y)   | deg <  513 | |D| = 4096 | fold with β₀
+Layer  2 — CP₂(y)   | deg <  257 | |D| = 2048 | fold with β₁
+Layer  3 — CP₃(y)   | deg <  129 | |D| = 1024 | fold with β₂
+Layer  4 — CP₄(y)   | deg <   65 | |D| =  512 | fold with β₃
+Layer  5 — CP₅(y)   | deg <   33 | |D| =  256 | fold with β₄
+Layer  6 — CP₆(y)   | deg <   17 | |D| =  128 | fold with β₅
+Layer  7 — CP₇(y)   | deg <    9 | |D| =   64 | fold with β₆
+Layer  8 — CP₈(y)   | deg <    5 | |D| =   32 | fold with β₇
+Layer  9 — CP₉(y)   | deg <    3 | |D| =   16 | fold with β₈
+Layer 10 — CP₁₀(y)  | deg <    2 | |D| =    8 | fold with β₉
+```
+
+After layer 10, one final fold with `β₁₀` produces a **constant polynomial** (degree 0). It is **sent as a raw value** over the channel — no Merkle tree is built for it.
+
+**Why 11 committed layers?** `⌈log₂(1025)⌉ = 11` folds to reach degree 0, producing 11 polynomial layers (0–10) each committed with a Merkle tree. The final constant after the 11th fold is sent raw.
+
+---
+
+## Phase 4 — Decommitment
+
+### `Decommitting 3 queries`
+
+The verifier (via Fiat-Shamir) picks 3 random indices in `[0, 8192)`. For each index `idx`, the prover opens:
+
+#### Trace openings
+
+```
+
+f(d_idx),      with Merkle path
+f(d_{idx+8}),  with Merkle path   ← evaluates f(g·x) for the transition constraint
+f(d_{idx+16}), with Merkle path   ← evaluates f(g²·x) for the transition constraint
+```
+
+**Why +8 and +16?** The domain D has 8192 points, the subgroup G has 1024 — ratio 8 (the blowup). Stepping by 8 in domain index corresponds to multiplying by `g` in the subgroup. This is how the verifier evaluates `f(gx)` and `f(g²x)` at a random domain point without knowing the polynomial explicitly.
+
+#### FRI layer openings
+
+For each FRI layer, the prover opens:
+
+- The value at `cur_idx`
+- Its Merkle authentication path
+- The "sibling" value at `cur_idx + layer_length/2` (this is the `-x` in the folding formula)
+- Its Merkle authentication path
+
+These are the two values the verifier needs to check each folding equation.
+
+---
+
+## Phase 5 — Verification
+
+### `stark::verify()`
+
+The verifier replays the Fiat-Shamir transcript from scratch, deriving the same challenges the prover used — without trusting any of them.
+
+### `Replaying Fiat-Shamir transcript`
+
+```
+
+1. Read f_lde__merkle root  → advance hash state
+2. Derive α₀, α₁, α₂ from hash state
+3. Read cp_lde_merkle root → advance hash state
+4. For each of 10 FRI layers (1–10):
+   a. Derive βᵢ₋₁ from hash state
+   b. Read layer Merkle root → advance hash state
+5. Derive one extra β₁₀ for the constant fold (no root sent)
+6. Read the final constant
+```
+
+The verifier is essentially re-running the Fiat-Shamir transform to confirm the challenges were derived honestly from the commitments — not chosen by the prover to cheat.
+
+### `Checking 3 decommitment queries`
+
+For each query index `idx`:
+
+**Step 1 — Verify Merkle paths**
+
+Confirm that the three revealed trace values are genuine leaves of the f_merkle tree. This proves the prover didn't swap values after seeing the query.
+
+**Step 2 — Recompute CP(d_idx) from the revealed values**
+
+```
+
+p₀ = (f(x) - 1) / (x - 1)
+p₁ = (f(x) - 2338775057) / (x - ω^1022)
+p₂ = (f(ω²·x) - f(ω·x)² - f(x)²) / Z(x)
+CP_expected = α₀·p₀ + α₁·p₁ + α₂·p₂
+```
+
+The verifier computes this entirely from the revealed values and public parameters — no trust required.
+
+**Step 3 — Check CP_expected matches FRI layer 0**
+
+```
+
+CP_expected == fri_layer[0][cur_idx]
+```
+
+If this fails: the prover's composition polynomial doesn't match their trace commitment. Caught.
+
+**Step 4 — Check FRI folding consistency across all 11 committed layers**
+
+For each consecutive layer pair (layers 0–9), check the folding equation:
+
+```
+
+next_layer[x²] = (layer[x] + layer[-x])/2 + β · (layer[x] - layer[-x])/(2x)
+```
+
+At layer 10, instead of comparing against a stored next layer, compare against the raw constant sent by the prover. If this holds at the random query point for all 10 fold checks, the verifier is convinced that `CP` genuinely has degree ≤ 1025.
+
+**Step 5 — Check transcript exhaustion**
+
+```rust
+
+channel.is_exhausted()
+```
+
+Every entry in the proof must be consumed. Any leftover data means the prover tried to smuggle in extra information — rejected.
+
+---
+
+## The Channel: Fiat-Shamir in Detail
+
+The `Channel` struct is the cryptographic backbone of the whole system.
+
+```
+
+state = "0"   (initial seed)
+
+Prover sends message m:          Verifier reads message m:
+  state = SHA256(state || m)       state = SHA256(state || m)
+  proof.push(m)                    m = proof.next()
+
+Both derive challenge identically:
+  challenge = state mod p
+  state = SHA256(state)   ← advance so each challenge is distinct
+```
+
+The verifier replays this identically, reading from the proof instead of generating messages.
+
+**Why this is secure:** SHA-256 is a one-way function. The prover cannot predict what alphas will be derived from the `f_lde_merkle root` before committing to it. The commitment locks in the values; the hash determines the challenges; the prover cannot retroactively adjust one to fit the other.
+
+**The binding chain:**
+
+```
+
+commit f_lde_merkle  → alphas are fixed → commit cp_lde__merkle  → betas are fixed → queries are fixed
+```
+
+At every step, the prover is committing first and learning the challenge second. This is the interactive protocol, made non-interactive by hashing.
+
+---
+
+## Proof Statistics & Soundness Analysis
+
+> **Coming in a follow-up post.** This section will cover the exact transcript entry count (163 entries), proof size breakdown (~42 KB), and a rigorous treatment of the soundness argument including the FRI proximity gap and why `(1/8)³ = 1/512` is the correct per-query bound.
+
+---
+
+
+## A Note on `FibSq(N)` in the UI
+
+The slider reveals `FibSq(N)` for any N in [0, 1022]. This value is **correct** — but it's important to understand _why_:
+
+> The verifier checks only `a[0]=1` and `a[1022]=2338775057`. Any intermediate value like `FibSq(781)` is guaranteed correct because the transition constraint was proved to hold at every step — but the verifier never queries it as a Fibonacci output. Any FRI decommitment queries that happen to land near index 781 are checking polynomial evaluation consistency, not the sequence value. The verifier checks the _structure_ of the computation, not its outputs.
+
+This is what makes STARKs fundamentally different from naive verification: **you verify the computation, not the result**.
+
+---
+
+## Component Map
+
+| File             | Role                                                                          |
+| ---------------- | ----------------------------------------------------------------------------- |
+| `field.rs`       | `𝔽_p` arithmetic — modular inverse, fast exponentiation, field element type   |
+| `polynomial.rs`  | Polynomial ops — iFFT/FFT, evaluation, composition, quotient                  |
+| `merkle_tree.rs` | SHA-256 Merkle tree — build, authentication paths, leaf verification          |
+| `channel.rs`     | Fiat-Shamir transcript — prover sends, verifier reads, both derive challenges |
+| `prover.rs`      | Trace → LDE → CP → FRI commit → decommitment openings                         |
+| `verifier.rs`    | Replay transcript → recompute CP → check FRI folding → check exhaustion       |
+| `wasm.rs`        | WASM bindings — `generate_proof` / `verify_proof` exposed to the browser      |
+| `App.svelte`     | UI — log rendering, step orchestration, trace element slider                  |
+
+---
+
+## Glossary
+
+| Term                            | Meaning                                                                                                      |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **STARK**                       | Scalable Transparent ARgument of Knowledge — ZK proof system, no trusted setup                               |
+| **Trace**                       | The sequence of computation states (here: the FibSq values, 1024 elements)                                   |
+| **LDE**                         | Low-Degree Extension — evaluating the trace polynomial on a domain 8× larger                                 |
+| **Blowup factor**               | Ratio of LDE domain to trace size; controls soundness error                                                  |
+| **Composition polynomial (CP)** | Linear combination of constraint quotients; low-degree iff all constraints hold                              |
+| **Zerofier**                    | Polynomial whose roots are exactly the points where a constraint must hold                                   |
+| **FRI**                         | Fast Reed-Solomon IOP of Proximity — proves a function is close to a low-degree polynomial                   |
+| **Folding**                     | Halving a polynomial's degree using a random challenge β                                                     |
+| **Merkle root**                 | A single 32-byte hash committing to an entire array of values                                                |
+| **Authentication path**         | The O(log n) sibling hashes needed to verify one Merkle leaf                                                 |
+| **Fiat-Shamir**                 | Replacing interactive verifier challenges with hash-derived pseudorandom values                              |
+| **Soundness error**             | Probability that a cheating prover fools the verifier (~0.2% here, i.e. 1/512)                               |
+| **Coset**                       | A shifted subgroup: `g · H = {g·h : h ∈ H}` — ensures evaluation domain ∩ constraint domain = ∅              |
+| **Subgroup**                    | A subset of `𝔽_p*` closed under multiplication; here of size 1024 (trace) or 8192 (LDE)                      |
+| **Schwartz-Zippel**             | Two distinct degree-d polynomials agree at at most d out of p points — the basis of polynomial IOP soundness |
