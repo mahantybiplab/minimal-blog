@@ -35,7 +35,10 @@ const { frontmatter, headings } = Astro.props;
         </div>
       </section>
 
-      <div class="pb-20 lg:flex lg:flex-row-reverse lg:items-start lg:gap-12">
+      <div class="pb-20 lg:flex lg:items-start lg:gap-12">
+        <div class="lg:w-3/4 min-w-0 prose-container [&>*:first-child]:mt-0">
+          <slot />
+        </div>
 
         {headings && headings.length > 0 && (
           <aside class="not-prose lg:w-1/4 lg:sticky lg:top-24 mb-12 lg:mb-0 z-20">
@@ -100,10 +103,6 @@ const { frontmatter, headings } = Astro.props;
             </nav>
           </aside>
         )}
-
-        <div class="lg:w-3/4 min-w-0 prose-container [&>*:first-child]:mt-0">
-          <slot />
-        </div>
       </div>
     </div>
   </Prose>
