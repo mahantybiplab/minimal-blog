@@ -2,19 +2,19 @@
 @import "rehype-callouts/theme/obsidian";
 @plugin "@tailwindcss/typography";
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
 /* ------------------------------
    Theme variables
 --------------------------------*/
 
 @theme {
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
 
   --font-mono:
-    "Fira Code", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
-    Consolas, "Liberation Mono", "Courier New", monospace;
+    "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, monospace;
 
   /* Adaptive Colors */
   --color-body: var(--bg-body);
@@ -28,30 +28,45 @@
   --color-card-hover: var(--bg-card-hover);
 }
 
-/* Light Theme (Updated for better contrast and color harmony) */
+/* Light Theme */
 :root {
-  --bg-body: #ffffff;
-  --fg-body: #1e293b;
-  --fg-muted: #64748b;
+  --bg-body: #f8f9fc;
+  --fg-body: #0d1117;
+  --fg-muted: #6b7280;
   --fg-subtitle: #4f46e5;
-  --color-primary: #4f46e5;
-  --color-logo-adaptive: #4f46e5;
-  --bg-menu: #f8fafc;
-  --border-color: #e2e8f0;
-  --bg-card-hover: rgba(15, 23, 42, 0.04);
+  --color-primary: #6264d8;
+  --color-logo-adaptive: #6264d8;
+  --bg-menu: #f1f3f9;
+  --border-color: #e4e7ef;
+  --bg-card-hover: rgba(91, 94, 244, 0.04);
+  --glow-color: rgba(91, 94, 244, 0.15);
 }
 
-/* Dark Theme (Original) */
+/* Dark Theme */
 .dark {
-  --bg-body: #0a0a12;
-  --fg-body: #e3e6e8;
-  --fg-muted: rgb(209, 213, 219);
-  --fg-subtitle: rgb(156, 168, 180);
-  --color-primary: #667eea;
-  --color-logo-adaptive: rgb(128, 159, 255);
-  --bg-menu: #0f0f1e;
-  --border-color: #1f2937;
-  --bg-card-hover: rgba(255, 255, 255, 0.05);
+  --bg-body: #06060f;
+  --fg-body: #e8eaf0;
+  --fg-muted: #8892a4;
+  --fg-subtitle: #7c7ff5;
+  --color-primary: #7c7ff5;
+  --color-logo-adaptive: #7c7ff5;
+  --bg-menu: #0b0b18;
+  --border-color: #16182a;
+  --bg-card-hover: rgba(124, 127, 245, 0.07);
+  --glow-color: rgba(124, 127, 245, 0.2);
+}
+
+/* Global font rendering */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Subtle dot-grid background */
+body {
+  background-image: radial-gradient(circle, var(--border-color) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
 /* ---------------------------------------------------------
@@ -68,7 +83,7 @@
 /* Light Mode Bold (Updated vibrant gradient) */
 
 .prose strong {
-  background: linear-gradient(90deg, #2e6de0, #7445d4);
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -76,7 +91,7 @@
 }
 
 .dark .prose strong {
-  background: linear-gradient(90deg, #a8c8fe, #d4c4fd);
+  background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -85,7 +100,21 @@
 
 .prose h2,
 .prose h3 {
-  @apply underline decoration-2 underline-offset-4 decoration-(--color-primary);
+  @apply no-underline;
+  position: relative;
+  padding-left: 0.85rem;
+}
+
+.prose h2::before,
+.prose h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 3px;
+  border-radius: 99px;
+  background: linear-gradient(to bottom, var(--color-primary), transparent);
 }
 
 @layer components {
@@ -140,16 +169,14 @@ pre {
   word-break: normal !important;
   overflow-x: auto !important;
 
-  /* Tighter, more readable on mobile */
   font-size: 0.72rem;
-  line-height: 1.6;
+  line-height: 1.7;
 
-  /* Breathing room inside the block */
   padding: 1rem !important;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
 
-  /* Subtle border to frame it */
-  border: 1px solid rgba(120, 120, 255, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
 
 @media (min-width: 640px) {

@@ -4,65 +4,44 @@ interface Props {
   subtitle?: string;
   description: string;
   url: string;
+  index?: number;
 }
-const { title, subtitle = false, description, url } = Astro.props;
+const { title, subtitle = false, description, url, index } = Astro.props;
 ---
 
-<article
-  class="group/article flex flex-col items-start break-keep transition-colors duration-300 hover:bg-card-hover rounded-lg p-4"
->
-  <!-- Text content -->
-  <div class="group/area w-full">
-    <a href={url} class=" w-fit block">
-      <span
-        class="text-xl font-semibold text-foreground hover:underline hover:text-nav hover:decoration-2 transition-colors"
-      >
-        {title}
-      </span>
-    </a>
-    {subtitle && <p class="font-bold  text-article-subtitle mt-1">{subtitle}</p>}
-    <p class="text-base italic text-slight-gray mt-4">{description}</p>
-  </div>
-  <!-- Read More section -->
-  <a
-    href={url}
-    class="group/readmore mt-4 mb-7 text-lg font-semibold flex items-center gap-2 text-nav hover:opacity-80 transition-opacity w-fit"
-  >
-    Read more
-    <!-- Arrow animation -->
-    <svg
-      width="60"
-      height="12"
-      viewBox="0 0 60 12"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      class="transition-all"
-    >
-      <!-- First arrow: appears on article hover -->
-      <path
-        d="M6 6H10.5 M8.5 2L10.5 6L8.5 10"
-        class="opacity-0 translate-x-0 transition-all duration-200 ease-out
-                 group-hover/article:opacity-100 group-hover/readmore:opacity-100"
-      ></path>
-      <!-- Following arrows: appear on Read more hover -->
-      <path
-        d="M8.5 10L11 6L8.5 2"
-        class="opacity-0 transition-all duration-200 delay-100 ease-out
-           group-hover/readmore:opacity-100 group-hover/readmore:translate-x-1"
-      ></path>
-      <path
-        d="M11 10L13.5 6L11 2"
-        class="opacity-0 transition-all duration-200 delay-200 ease-out
-           group-hover/readmore:opacity-100 group-hover/readmore:translate-x-1"
-      ></path>
-      <path
-        d="M13.5 10L16 6L13.5 2"
-        class="opacity-0 transition-all duration-200 delay-300 ease-out
-           group-hover/readmore:opacity-100 group-hover/readmore:translate-x-1"
-      ></path>
-    </svg>
+<article class="group relative">
+  <a href={url} class="block p-5 rounded-2xl border border-border/60
+                        transition-all duration-300
+                        hover:border-nav/40 hover:bg-card-hover
+                        hover:shadow-[0_0_30px_-8px_var(--glow-color)]
+                        active:border-nav/40 active:bg-card-hover active:scale-[0.99]">
+    <div class="flex items-start justify-between gap-4">
+      <div class="flex-1 min-w-0">
+        {index !== undefined && (
+          <span class="text-[10px] font-mono text-slight-gray/50 tracking-widest mb-2 block">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+        )}
+        <h3 class="text-lg font-semibold text-foreground group-hover:text-nav group-active:text-nav transition-colors duration-200 leading-snug">
+          {title}
+        </h3>
+        {subtitle && (
+          <p class="text-sm text-article-subtitle mt-1 font-medium leading-snug">{subtitle}</p>
+        )}
+        <p class="text-sm text-slight-gray mt-2.5 leading-relaxed line-clamp-2">{description}</p>
+      </div>
+      <!-- Arrow: muted on desktop until hover, always visible on mobile -->
+      <div class="shrink-0 mt-1 w-7 h-7 rounded-full border
+                  border-nav/40 text-nav
+                  sm:border-border/60 sm:text-slight-gray
+                  flex items-center justify-center
+                  group-hover:border-nav/40 group-hover:text-nav
+                  transition-all duration-300 group-hover:translate-x-0.5 group-active:translate-x-0.5">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 6h8M7 3l3 3-3 3"/>
+        </svg>
+      </div>
+    </div>
   </a>
 </article>

@@ -11,26 +11,30 @@ const pageTitle = "Home Page";
 ---
 
 <BaseLayout pageTitle={pageTitle} showHero={true}>
-  <div class="flex flex-col md:flex-row md:gap-6">
-    <div class="basis-3/5 min-w-0">
-      <h2 class="text-logo font-bold uppercase mb-9 tracking-wider px-4">
-        Code, Chaos & Curiosity
-      </h2>
+  <div class="flex flex-col md:flex-row md:gap-0">
+    <div class="basis-3/5 min-w-0 md:pr-10">
+      <p class="text-[10px] font-mono uppercase tracking-[0.2em] text-slight-gray/60 mb-6 px-1">
+        Latest Posts
+      </p>
       <ArticleList />
     </div>
 
-    <div class="basis-2/5 min-w-0 pl-4">
-      <h2 class="text-logo font-bold uppercase md:mt-20 mt-7 mb-7  tracking-wider ">
-        Categories
-      </h2>
+    <!-- Vertical divider -->
+    <div class="hidden md:block w-px bg-gradient-to-b from-transparent via-border to-transparent mx-2 self-stretch"></div>
+
+    <div class="basis-2/5 min-w-0 md:pl-10">
+      <p class="text-[10px] font-mono uppercase tracking-[0.2em] text-slight-gray/60 md:mt-0 mt-10 mb-5">
+        Browse by Topic
+      </p>
       <div class="flex gap-2 flex-wrap">
         {
           tags.map(tag => (
             <a
               href={`/tags/${tag}`}
-              class="inline-block border border-border text-slight-gray px-4 py-1.5 
-             rounded-lg text-sm font-medium transition-all duration-200 
-             hover:border-nav hover:text-nav hover:scale-[1.03]"
+              class="inline-block border border-border/70 text-slight-gray px-3 py-1
+                     rounded-full text-xs font-medium tracking-wide transition-all duration-200
+                     hover:border-nav/60 hover:text-nav hover:bg-card-hover
+                     hover:shadow-[0_0_12px_-4px_var(--glow-color)]"
             >
               {tag}
             </a>

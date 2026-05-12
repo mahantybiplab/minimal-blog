@@ -33,10 +33,16 @@ const fullDate = formatDateWithOrdinal(frontmatter.pubDate);
   <h1
     class="mb-5 wrap-break-word [hyphens:auto] [-webkit-hyphens:auto] max-w-full text-balance"
   >
-    {title && <span class="text-4xl block leading-[1.3]">{title}</span>}
+    {title && (
+      <span class="text-4xl sm:text-5xl font-bold block leading-[1.2] tracking-tight
+                   bg-gradient-to-br from-foreground to-foreground/70
+                   bg-clip-text text-transparent">
+        {title}
+      </span>
+    )}
     {
       subtitle && (
-        <span class="text-xl text-article-subtitle font-normal mb-8 mt-1 block">
+        <span class="text-lg sm:text-xl text-article-subtitle font-normal mb-8 mt-3 block leading-snug">
           {subtitle}
         </span>
       )

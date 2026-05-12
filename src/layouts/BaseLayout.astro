@@ -43,9 +43,9 @@ const { pageTitle, showHero = false } = Astro.props;
     </script>
   </head>
   <body
-    class="text-foreground font-sans  transition-colors duration-300 px-4 sm:px-8 md:px-16"
+    class={`text-foreground font-sans transition-colors duration-300 px-4 sm:px-8 md:px-16 ${showHero ? 'pt-20' : ''}`}
   >
-    <Header />
+    <Header showHero={showHero} />
     {showHero && <Hero />}
     <main>
       <slot />

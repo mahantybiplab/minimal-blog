@@ -3,10 +3,137 @@ import { getCollection } from 'astro:content';
 import ArticleCard from "./ArticleCard.astro";
 
 const allPosts = await getCollection('blog');
-// Sort by date descending
 allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const INITIAL = 2;
+const initialPosts = allPosts.slice(0, INITIAL);
+const hasMore = allPosts.length > INITIAL;
 ---
 
-<div >
-   {allPosts.map((post: any) => <ArticleCard url={`/posts/${post.slug}`} title={post.data.title} description={post.data.description} subtitle={post.data.subtitle}/>)}
+<div id="article-list" class="flex flex-col gap-3">
+  {initialPosts.map((post: any, i: number) => (
+    <ArticleCard
+      url={`/posts/${post.slug}`}
+      title={post.data.title}
+      description={post.data.description}
+      subtitle={post.data.subtitle}
+      index={i}
+    />
+  ))}
 </div>
+
+{hasMore && (
+  <div id="load-sentinel" class="flex flex-col items-center gap-3 mt-6">
+    <!-- Shown while loading -->
+    <div id="load-spinner" class="hidden gap-1.5 items-center text-xs text-slight-gray/60 font-mono">
+      <span class="w-1 h-1 rounded-full bg-nav animate-bounce [animation-delay:0ms]"></span>
+      <span class="w-1 h-1 rounded-full bg-nav animate-bounce [animation-delay:150ms]"></span>
+      <span class="w-1 h-1 rounded-full bg-nav animate-bounce [animation-delay:300ms]"></span>
+    </div>
+    <!-- Fallback button if IntersectionObserver doesn't fire -->
+    <button
+      id="load-more-btn"
+      class="text-xs font-mono uppercase tracking-widest text-slight-gray/60
+             hover:text-nav transition-colors duration-200 px-4 py-2
+             border border-border/50 rounded-full hover:border-nav/40"
+    >
+      Load more
+    </button>
+  </div>
+)}
+
+<script>
+  const INITIAL = 2;
+
+  function buildCard(post: { index: number; url: string; title: string; subtitle: string | null; description: string }) {
+    const article = document.createElement('article');
+    article.className = 'group relative';
+    article.style.opacity = '0';
+    article.style.transform = 'translateY(8px)';
+    article.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+
+    article.innerHTML = `
+      <a href="${post.url}" class="block p-5 rounded-2xl border border-border/60
+                                   transition-all duration-300
+                                   hover:border-nav/40 hover:bg-card-hover
+                                   hover:shadow-[0_0_30px_-8px_var(--glow-color)]
+                                   active:border-nav/40 active:bg-card-hover active:scale-[0.99]">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <span class="text-[10px] font-mono text-slight-gray/50 tracking-widest mb-2 block">
+              ${String(post.index + 1).padStart(2, '0')}
+            </span>
+            <h3 class="text-lg font-semibold text-foreground group-hover:text-nav group-active:text-nav transition-colors duration-200 leading-snug">
+              ${post.title}
+            </h3>
+            ${post.subtitle ? `<p class="text-sm text-article-subtitle mt-1 font-medium leading-snug">${post.subtitle}</p>` : ''}
+            <p class="text-sm text-slight-gray mt-2.5 leading-relaxed line-clamp-2">${post.description}</p>
+          </div>
+          <div class="shrink-0 mt-1 w-7 h-7 rounded-full border
+                      border-nav/40 text-nav
+                      sm:border-border/60 sm:text-slight-gray
+                      flex items-center justify-center
+                      group-hover:border-nav/40 group-hover:text-nav
+                      transition-all duration-300 group-hover:translate-x-0.5 group-active:translate-x-0.5">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 6h8M7 3l3 3-3 3"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+    `;
+
+    return article;
+  }
+
+  async function loadMore(list: HTMLElement, sentinel: HTMLElement, btn: HTMLButtonElement, spinner: HTMLElement) {
+    const currentCount = list.querySelectorAll('article').length;
+    spinner.classList.remove('hidden');
+    spinner.classList.add('flex');
+    btn.classList.add('hidden');
+
+    const res = await fetch('/api/posts.json');
+    const allPosts = await res.json();
+    const next = allPosts.slice(currentCount, currentCount + 4);
+
+    if (next.length === 0) {
+      sentinel.remove();
+      return;
+    }
+
+    for (const post of next) {
+      const card = buildCard(post);
+      list.appendChild(card);
+      // Trigger fade-in after paint
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }));
+    }
+
+    spinner.classList.add('hidden');
+    spinner.classList.remove('flex');
+
+    const remaining = allPosts.length - list.querySelectorAll('article').length;
+    if (remaining <= 0) {
+      sentinel.remove();
+    } else {
+      btn.classList.remove('hidden');
+    }
+  }
+
+  function init() {
+    const list = document.getElementById('article-list') as HTMLElement;
+    const sentinel = document.getElementById('load-sentinel') as HTMLElement;
+    const btn = document.getElementById('load-more-btn') as HTMLButtonElement;
+    const spinner = document.getElementById('load-spinner') as HTMLElement;
+
+    if (!list || !sentinel || !btn) return;
+
+    btn.addEventListener('click', () => loadMore(list, sentinel, btn, spinner));
+  }
+
+  init();
+  document.addEventListener('astro:after-swap', init);
+</script>
