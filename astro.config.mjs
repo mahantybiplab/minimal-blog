@@ -7,7 +7,7 @@ import rehypeKatex from "rehype-katex";
 import rehypeCallouts from "rehype-callouts";
 import { unified } from "@astrojs/markdown-remark";
 export default defineConfig({
-  site: "https://biplabmahanty.netlify.app",
+  site: "https://biplabmahanty.com",
   markdown: {
     shikiConfig: { theme: "tokyo-night", wrap: true },
     processor: unified({
