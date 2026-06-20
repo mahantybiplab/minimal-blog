@@ -9,7 +9,7 @@ const { showHero = false } = Astro.props;
 {showHero ? (
   <header class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-2xl">
     <div class="flex items-center justify-between h-12 px-4 sm:px-5
-                bg-body/70 backdrop-blur-2xl
+                bg-navbar backdrop-blur-2xl
                 rounded-full border border-border/50
                 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.12)]">
       <Logo />
@@ -35,7 +35,7 @@ const { showHero = false } = Astro.props;
     </div>
   </header>
 ) : (
-  <header class="sticky top-0 z-50 -mx-4 sm:-mx-8 md:-mx-16 px-4 sm:px-8 md:px-16 bg-transparent backdrop-blur-xl">
+  <header class="sticky top-0 z-50 -mx-4 sm:-mx-8 md:-mx-16 px-4 sm:px-8 md:px-16 bg-navbar backdrop-blur-xl">
     <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/30 to-transparent"></div>
     <div class="flex items-center justify-between h-14 max-w-5xl mx-auto">
       <Logo />

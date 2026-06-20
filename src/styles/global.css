@@ -22,6 +22,7 @@
   --color-nav: var(--color-primary);
   --color-logo: var(--color-logo-adaptive);
   --color-menu: var(--bg-menu);
+  --color-navbar: var(--bg-navbar);
   --color-article-subtitle: var(--fg-subtitle);
   --color-border: var(--border-color);
   --color-card-hover: var(--bg-card-hover);
@@ -29,13 +30,14 @@
 
 /* Light Theme */
 :root {
-  --bg-gradient-top: #e8f2eb; /* MistSurface */
-  --bg-gradient-bottom: #f2f7f3; /* MistWhite */
+  --bg-gradient-top: #b8dec4; /* TealContainer */
+  --bg-gradient-bottom: #b8dec4; /* TealContainer */
   --header-gradient-start: #b8dec4; /* TealContainer */
   --header-gradient-mid: #b8dec4;
-  --header-gradient-end: transparent;
+  --header-gradient-end: #b8dec4;
   
-  --bg-body: #f2f7f3;
+  --bg-body: #b8dec4;
+  --bg-navbar: rgba(184, 222, 196, 0.75); /* Mint Glass */
   --fg-body: #0d2b18;
   --fg-muted: #3d6650;
   --fg-subtitle: #2e7d52;
@@ -56,6 +58,7 @@
   --header-gradient-end: #080c0b;
 
   --bg-body: #080c0b;
+  --bg-navbar: rgba(18, 26, 23, 0.8); /* Deep Emerald Slate Glass */
   --fg-body: #f0f7f3;
   --fg-muted: #88a399;
   --fg-subtitle: #9fffd5;

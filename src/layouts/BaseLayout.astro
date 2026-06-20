@@ -50,11 +50,11 @@ const { pageTitle, showHero = false } = Astro.props;
          style="background: linear-gradient(180deg, var(--header-gradient-start) 0%, var(--header-gradient-mid) 30%, var(--header-gradient-end) 60%);">
     </div>
 
-    <!-- Soft Light Beams Overlay (Mask removed to restore sweeping continuity across the screen) -->
+    <!-- Soft Light Beams Overlay (Continuous, mix-blend-normal for light mode compatibility, screen for dark) -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden mix-blend-normal dark:mix-blend-screen">
-      <div class="light-beam" style="--beam-angle: -45deg; --beam-dur: 20s; --beam-opacity: 0.5; --beam-delay: 0s;"></div>
-      <div class="light-beam" style="--beam-angle: -30deg; --beam-dur: 24s; --beam-opacity: 0.4; --beam-delay: -7s;"></div>
-      <div class="light-beam" style="--beam-angle: -60deg; --beam-dur: 28s; --beam-opacity: 0.45; --beam-delay: -14s;"></div>
+      <div class="light-beam" style="--beam-angle: -45deg; --beam-dur: 20s; --beam-opacity-light: 0.75; --beam-opacity-dark: 0.15; --beam-delay: 0s;"></div>
+      <div class="light-beam" style="--beam-angle: -30deg; --beam-dur: 24s; --beam-opacity-light: 0.60; --beam-opacity-dark: 0.10; --beam-delay: -7s;"></div>
+      <div class="light-beam" style="--beam-angle: -60deg; --beam-dur: 28s; --beam-opacity-light: 0.65; --beam-opacity-dark: 0.12; --beam-delay: -14s;"></div>
     </div>
 
 
@@ -109,24 +109,20 @@ const { pageTitle, showHero = false } = Astro.props;
         position: absolute;
         top: -50%; left: -50%;
         width: 200%; height: 200%;
-        --beam-color: #FFFFFF; /* Light mode: Clean, premium white sun-rays */
-        --beam-opacity-multiplier: 0.45; /* Balanced visibility on soft light backgrounds */
-        background: radial-gradient(ellipse at center, var(--beam-color) 0%, transparent 60%);
+        --beam-color: #ffffff;
+        --beam-opacity: var(--beam-opacity-light);
+        background: radial-gradient(ellipse at center, var(--beam-color) 0%, var(--beam-color) 20%, transparent 60%);
         transform-origin: center;
-        animation: beamSweepLight var(--beam-dur) var(--beam-delay) ease-in-out infinite alternate;
+        animation: beamSweep var(--beam-dur) var(--beam-delay) ease-in-out infinite alternate;
       }
       html.dark .light-beam {
-        --beam-color: var(--color-primary); /* Dark mode: Frosted emerald glow */
-        --beam-opacity-multiplier: 0.25; /* Subtle glow on dark backgrounds to protect text */
-        animation-name: beamSweepDark;
+        --beam-color: var(--color-primary);
+        --beam-opacity: var(--beam-opacity-dark);
+        background: radial-gradient(ellipse at center, var(--beam-color) 0%, transparent 60%);
       }
-      @keyframes beamSweepLight {
-        0% { transform: rotate(calc(var(--beam-angle) - 8deg)) scaleX(2) scaleY(0.08) translateY(-20%); opacity: calc(var(--beam-opacity) * var(--beam-opacity-multiplier) * 0.4); }
-        100% { transform: rotate(calc(var(--beam-angle) + 8deg)) scaleX(2.5) scaleY(0.18) translateY(20%); opacity: calc(var(--beam-opacity) * var(--beam-opacity-multiplier)); }
-      }
-      @keyframes beamSweepDark {
-        0% { transform: rotate(calc(var(--beam-angle) - 8deg)) scaleX(2) scaleY(0.08) translateY(-20%); opacity: calc(var(--beam-opacity) * var(--beam-opacity-multiplier) * 0.4); }
-        100% { transform: rotate(calc(var(--beam-angle) + 8deg)) scaleX(2.5) scaleY(0.18) translateY(20%); opacity: calc(var(--beam-opacity) * var(--beam-opacity-multiplier)); }
+      @keyframes beamSweep {
+        0% { transform: rotate(calc(var(--beam-angle) - 8deg)) scaleX(2) scaleY(0.08) translateY(-20%); opacity: calc(var(--beam-opacity) * 0.4); }
+        100% { transform: rotate(calc(var(--beam-angle) + 8deg)) scaleX(2.5) scaleY(0.18) translateY(20%); opacity: var(--beam-opacity); }
       }
     </style>
 
