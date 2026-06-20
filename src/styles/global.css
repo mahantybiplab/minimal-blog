@@ -81,6 +81,7 @@ html {
 html, body {
   min-height: 100dvh;
   background-color: var(--bg-gradient-bottom);
+  scroll-behavior: smooth;
 }
 
 body::before {
