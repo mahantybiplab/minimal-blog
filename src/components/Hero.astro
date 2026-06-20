@@ -38,7 +38,7 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
       <!-- Tagline -->
       <p class="hero-slide-in text-[11px] sm:text-[13px] uppercase tracking-[0.2em] font-medium text-nav text-wrap break-words"
          style="--delay: 0.3s;">
-        Privacy-first · Gentle Interception · 100% Offline
+        Privacy-first · Gentle App Interruption · 100% Offline
       </p>
     </div>
 
@@ -72,7 +72,7 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
     <!-- Body Text -->
     <p class="hero-slide-in order-3 lg:col-start-1 lg:row-start-2 text-[14px] sm:text-[15px] lg:text-[16px] text-slight-gray max-w-full lg:max-w-2xl lg:mb-6 leading-[1.6] text-wrap break-words text-justify"
        style="--delay: 0.45s;">
-      I'm Biplab. I build <span class="text-foreground font-medium">EnsoMori</span> — an offline Android companion that turns <span class="text-foreground font-medium">mindless scrolling into moments of self-discovery</span>. If you're tired of strict app blockers and relying on <span class="text-foreground font-medium">sheer willpower</span>, EnsoMori offers a different path. Using <span class="text-foreground font-medium">gentle interceptions</span> and <span class="text-foreground font-medium">forgiving daily check-ins</span>, it builds <span class="text-foreground font-medium">effortless awareness</span>. Because real change only occurs when we stop resisting and learn to be with <span class="text-foreground italic">what is</span>, it helps you understand your deepest habits and <span class="text-foreground font-medium">change without trying to change</span>.
+      I'm Biplab. I build <span class="text-foreground font-medium">EnsoMori</span> — an offline Android companion that turns <span class="text-foreground font-medium">mindless scrolling into moments of self-discovery</span>. If you're tired of strict app blockers and relying on <span class="text-foreground font-medium">sheer willpower</span>, EnsoMori offers a different path. Through <span class="text-foreground font-medium">gentle app interruptions</span>, a <span class="text-foreground font-medium">daily journal</span>, and forgiving check-ins, it builds <span class="text-foreground font-medium">effortless awareness</span>. Because real change only occurs when we stop resisting and learn to be with <span class="text-foreground italic">what is</span>, it helps you understand your deepest habits and <span class="text-foreground font-medium">change without trying to change</span>.
     </p>
 
     <!-- Actions -->
@@ -165,18 +165,29 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
     transform: translate(-50%, -50%);
   }
 
+  @keyframes glowBreatheOuter {
+    0%, 100% { opacity: 0.15; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.25; transform: translate(-50%, -50%) scale(1.15); }
+  }
+
+  @keyframes glowBreatheInner {
+    0%, 100% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.4; transform: translate(-50%, -50%) scale(1.2); }
+  }
+
   .enso-glow-outer {
     width: 80%; height: 80%;
     background: var(--color-primary);
     filter: blur(60px);
-    opacity: 0.15;
+    animation: glowBreatheOuter 8s ease-in-out infinite;
   }
 
   .enso-glow-inner {
     width: 40%; height: 40%;
     background: var(--color-primary);
     filter: blur(30px);
-    opacity: 0.25;
+    animation: glowBreatheInner 8s ease-in-out infinite;
+    animation-delay: 1s;
   }
 
   /* ─── Animated Border Card ─── */
@@ -241,9 +252,12 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
     const line2El = document.getElementById('tw-line2');
     if (line1El && line2El) {
       const phrases = [
-        ['Understand', 'Yourself.'],
+        ['Change Without', 'Trying To Change.'],
+        ['Gentle App', 'Interruptions.'],
+        ['30 Days', 'Self Inquiry.'],
+        ['1 Journal.', '3 Check-ins.'],
         ['Log Moments.', 'Find Clarity.'],
-        ['Change Without', 'Trying To Change.']
+        ['Understand', 'Yourself.']
       ];
       let phraseIdx = 0;
       let phase = 'type1'; // type1, type2, pause, del2, del1, wait
