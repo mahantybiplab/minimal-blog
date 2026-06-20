@@ -13,7 +13,7 @@ const hasMore = allPosts.length > INITIAL;
 <div id="article-list" class="flex flex-col gap-3">
   {initialPosts.map((post: any, i: number) => (
     <ArticleCard
-      url={`/posts/${post.slug}`}
+      url={`/posts/${post.id}`}
       title={post.data.title}
       description={post.data.description}
       subtitle={post.data.subtitle}

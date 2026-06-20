@@ -1,34 +1,387 @@
-<section class="relative flex items-center justify-center h-[56vh] overflow-hidden">
-  <!-- Dot grid overlay -->
-  <div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20"
-    style="background-image: radial-gradient(circle, var(--border-color) 1px, transparent 1px); background-size: 28px 28px;">
+---
+import { Image } from 'astro:assets';
+import ensoGraphic from '../assets/enso_feature_graphic.png';
+---
+
+<section id="hero" class="relative flex items-center justify-center overflow-hidden pt-10 pb-16">
+
+  <!-- Floating particles -->
+  <div aria-hidden="true" class="absolute inset-0 pointer-events-none overflow-hidden" id="particles"></div>
+
+  <!-- Custom cursor ring -->
+  <div id="cursor-ring" class="fixed pointer-events-none z-50 hidden md:block" style="opacity: 0; transform: translate(-50%, -50%);">
+    <div class="cursor-dot"></div>
+    <div class="cursor-circle"></div>
   </div>
 
-  <!-- Central glow orb -->
-  <div aria-hidden="true" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-    <div class="w-[600px] h-[300px] rounded-full
-                bg-[radial-gradient(ellipse_at_center,var(--glow-color),transparent_70%)]
-                blur-[80px]"></div>
-  </div>
+  <!-- Content Container -->
+  <div class="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-12 flex flex-col md:flex-row items-center gap-12 md:gap-20">
+    
+    <!-- Left Column -->
+    <div class="flex-1 text-left flex flex-col items-start">
+      
+      <!-- Elegant Badge -->
+      <a href="https://play.google.com/store/apps/details?id=com.mahantybiplab.ensomori" target="_blank" 
+         class="hero-slide-in group inline-flex items-center gap-2 px-4 py-1.5 rounded-full 
+                border border-border/60 bg-body/50 backdrop-blur-sm
+                hover:border-nav/40 transition-all duration-500 mb-10 cursor-none"
+         style="--delay: 0s;">
+        <span class="text-[11px] uppercase tracking-[0.15em] font-semibold text-slight-gray group-hover:text-foreground transition-colors duration-500">
+          Building EnsoMori
+        </span>
+        <svg class="w-3 h-3 text-slight-gray/60 group-hover:text-nav group-hover:translate-x-0.5 transition-all duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
 
-  <!-- Fade to body at bottom -->
-  <div aria-hidden="true" class="absolute bottom-0 left-0 right-0 h-32
-       bg-gradient-to-t from-body to-transparent pointer-events-none"></div>
-
-  <!-- Content -->
-  <div class="relative z-10 text-center px-4 select-none">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border
-                text-xs font-medium text-slight-gray mb-6 backdrop-blur-sm bg-body/40">
-      <span class="w-1.5 h-1.5 rounded-full bg-nav animate-pulse"></span>
-      Personal Blog
+      <!-- Headline (Recursive font, typewriter via JS) -->
+      <h1 class="hero-slide-in mb-5 min-h-[7rem] sm:min-h-[8.5rem] lg:min-h-[10rem]" style="--delay: 0.15s; font-family: 'Recursive', monospace;">
+        <span id="tw-line1" class="block text-5xl sm:text-6xl lg:text-[4.5rem] font-bold tracking-tight leading-[1.08] text-foreground"></span>
+        <span id="tw-line2" class="block text-5xl sm:text-6xl lg:text-[4.5rem] font-bold tracking-tight leading-[1.08] text-foreground"></span>
+        <span class="typewriter-caret"></span>
+      </h1>
+      
+      <!-- Tagline -->
+      <p class="hero-slide-in text-[13px] uppercase tracking-[0.2em] font-medium text-nav mb-8"
+         style="--delay: 0.3s;">
+        Privacy-first · 100% Offline · Open Source
+      </p>
+      
+      <!-- Body Text -->
+      <p class="hero-slide-in text-base sm:text-[17px] font-light text-slight-gray max-w-md mb-12 leading-[1.75]"
+         style="--delay: 0.45s;">
+        I'm Biplab. I build <span class="text-foreground font-medium">EnsoMori</span> — an Android app that gently interrupts habitual distractions, and I write about code, design, and intentional living.
+      </p>
+      
+      <!-- Actions -->
+      <div class="hero-slide-in flex flex-wrap items-center gap-4"
+           style="--delay: 0.6s;">
+        <a href="https://play.google.com/store/apps/details?id=com.mahantybiplab.ensomori" target="_blank" 
+           class="hero-cta group relative px-7 py-3 rounded-full bg-foreground text-body text-sm font-semibold tracking-wide overflow-hidden
+                  transition-all duration-300 cursor-none">
+          <span class="relative z-10">Get the App</span>
+          <div class="hero-cta-shine"></div>
+        </a>
+        <a href="#posts" 
+           class="hero-border-glow px-7 py-3 rounded-full border border-border text-slight-gray text-sm font-medium tracking-wide 
+                  hover:text-foreground transition-all duration-300 cursor-none">
+          Read Articles
+        </a>
+      </div>
     </div>
-    <h1 class="text-6xl sm:text-8xl font-bold tracking-tighter leading-[0.95]">
-      <span class="bg-gradient-to-b from-foreground via-foreground to-foreground/30 bg-clip-text text-transparent">
-        Curiosity
-      </span>
-    </h1>
-    <p class="mt-4 text-base sm:text-lg font-light tracking-[0.25em] uppercase text-slight-gray">
-      Beyond Code
-    </p>
+
+    <!-- Right Column: Image with Enso glow -->
+    <div class="hero-slide-in flex-1 w-full max-w-lg relative"
+         style="--delay: 0.35s;">
+      <div class="relative group cursor-none">
+        
+        <!-- Enso circle glow layers -->
+        <div class="enso-glow enso-glow-outer"></div>
+        <div class="enso-glow enso-glow-inner"></div>
+
+        <!-- Animated border card -->
+        <div class="hero-card-wrapper">
+          <div class="hero-card-border"></div>
+          <div class="hero-card-content">
+            <Image 
+              src={ensoGraphic} 
+              alt="EnsoMori Feature Graphic" 
+              class="w-full h-auto"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    
   </div>
 </section>
+
+<style>
+  #hero { cursor: none; }
+
+  /* ─── Custom cursor ─── */
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease;
+    z-index: 2;
+  }
+  .cursor-circle {
+    width: 40px; height: 40px;
+    border: 1.5px solid var(--color-primary);
+    border-radius: 50%;
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+    opacity: 0.5;
+  }
+  .cursor-hover .cursor-circle { width: 60px; height: 60px; opacity: 0.8; }
+  .cursor-hover .cursor-dot { transform: translate(-50%, -50%) scale(2); }
+
+  /* ─── Staggered Slide-In ─── */
+  .hero-slide-in {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+    animation: slideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes slideIn {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ─── Typewriter Caret ─── */
+  .typewriter-caret {
+    display: inline-block;
+    width: 3px;
+    height: 1.1em;
+    background: var(--color-primary);
+    margin-left: 4px;
+    vertical-align: text-bottom;
+    animation: caretBlink 0.7s step-end infinite;
+  }
+  @keyframes caretBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* ─── Particles ─── */
+  .particle {
+    position: absolute; border-radius: 50%;
+    background: var(--color-primary);
+    opacity: 0;
+    animation: particleFloat var(--duration) var(--particle-delay) ease-in-out infinite;
+  }
+  @keyframes particleFloat {
+    0% { opacity: 0; transform: translateY(0) scale(0); }
+    10% { opacity: 0.6; transform: translateY(-20px) scale(1); }
+    90% { opacity: 0.3; }
+    100% { opacity: 0; transform: translateY(-200px) scale(0.5); }
+  }
+
+  /* ─── CTA Button ─── */
+  .hero-cta:hover {
+    transform: scale(1.04);
+    box-shadow: 0 8px 40px -8px var(--glow-color);
+  }
+  .hero-cta-shine {
+    position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  }
+  .hero-cta:hover .hero-cta-shine {
+    animation: ctaShine 0.6s ease-out forwards;
+  }
+  @keyframes ctaShine { to { left: 100%; } }
+
+  .hero-border-glow:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 20px -5px var(--glow-color), inset 0 0 20px -12px var(--glow-color);
+  }
+
+  /* ─── Enso Circle Glow (two layers for depth) ─── */
+  .enso-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .enso-glow-outer {
+    width: 80%; height: 80%;
+    background: var(--color-primary);
+    filter: blur(60px);
+    animation: ensoOuter 3s ease-in-out infinite;
+  }
+
+  .enso-glow-inner {
+    width: 40%; height: 40%;
+    background: var(--color-primary);
+    filter: blur(30px);
+    animation: ensoInner 3s ease-in-out 0.5s infinite;
+  }
+
+  @keyframes ensoOuter {
+    0%, 100% { opacity: 0.12; transform: translate(-50%, -50%) scale(0.95); }
+    50% { opacity: 0.3; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  @keyframes ensoInner {
+    0%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(0.9); }
+    50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.15); }
+  }
+
+  /* ─── Animated Border Card ─── */
+  .hero-card-wrapper {
+    position: relative;
+    border-radius: 1rem;
+    padding: 3px;
+    animation: cardFloat 7s ease-in-out infinite;
+  }
+
+  .hero-card-border {
+    position: absolute;
+    inset: -3px;
+    border-radius: 1rem;
+    background: conic-gradient(
+      from var(--card-angle, 0deg),
+      var(--color-primary) 0%,
+      transparent 12%,
+      transparent 45%,
+      var(--color-primary) 55%,
+      transparent 67%,
+      transparent 100%
+    );
+    animation: rotateBorder 4s linear infinite;
+  }
+
+  /* Extra solid border underneath so it's always visible */
+  .hero-card-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 1rem;
+    border: 1.5px solid var(--color-primary);
+    opacity: 0.4;
+  }
+
+  .hero-card-content {
+    position: relative;
+    z-index: 1;
+    border-radius: calc(1rem - 3px);
+    overflow: hidden;
+    background: var(--bg-body);
+  }
+
+  @property --card-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @keyframes rotateBorder { to { --card-angle: 360deg; } }
+  @keyframes cardFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+</style>
+
+<script>
+  function initHero() {
+    // ── Typewriter (two-line, sequential) ──
+    const line1El = document.getElementById('tw-line1');
+    const line2El = document.getElementById('tw-line2');
+    if (line1El && line2El) {
+      const phrases = [
+        ['Mindful', 'Screen Time.'],
+        ['Reclaim', 'Your Focus.'],
+        ['Break The', 'Habit Loop.']
+      ];
+      let phraseIdx = 0;
+      let phase = 'type1'; // type1, type2, pause, del2, del1, wait
+      let charIdx = 0;
+
+      function tick() {
+        const [l1, l2] = phrases[phraseIdx];
+
+        if (phase === 'type1') {
+          charIdx++;
+          line1El.textContent = l1.slice(0, charIdx);
+          if (charIdx >= l1.length) { phase = 'type2'; charIdx = 0; }
+          setTimeout(tick, 90);
+        } else if (phase === 'type2') {
+          charIdx++;
+          line2El.textContent = l2.slice(0, charIdx);
+          if (charIdx >= l2.length) { phase = 'pause'; }
+          setTimeout(tick, 90);
+        } else if (phase === 'pause') {
+          setTimeout(() => { phase = 'del2'; charIdx = phrases[phraseIdx][1].length; tick(); }, 2500);
+        } else if (phase === 'del2') {
+          charIdx--;
+          line2El.textContent = l2.slice(0, charIdx);
+          if (charIdx <= 0) { phase = 'del1'; charIdx = phrases[phraseIdx][0].length; }
+          setTimeout(tick, 50);
+        } else if (phase === 'del1') {
+          charIdx--;
+          line1El.textContent = l1.slice(0, charIdx);
+          if (charIdx <= 0) { phase = 'wait'; }
+          setTimeout(tick, 50);
+        } else if (phase === 'wait') {
+          phraseIdx = (phraseIdx + 1) % phrases.length;
+          phase = 'type1';
+          charIdx = 0;
+          setTimeout(tick, 400);
+        }
+      }
+
+      setTimeout(tick, 600);
+    }
+
+    // ── Custom Cursor ──
+    const ring = document.getElementById('cursor-ring');
+    const hero = document.getElementById('hero');
+    if (!ring || !hero) return;
+
+    let mouseX = 0, mouseY = 0;
+    let ringX = 0, ringY = 0;
+    let cursorVisible = false;
+
+    hero.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (!cursorVisible) {
+        ringX = mouseX;
+        ringY = mouseY;
+        ring.style.left = ringX + 'px';
+        ring.style.top = ringY + 'px';
+        ring.style.opacity = '1';
+        cursorVisible = true;
+      }
+    });
+
+    hero.addEventListener('mouseleave', () => {
+      ring.style.opacity = '0';
+      cursorVisible = false;
+    });
+
+    function animateCursor() {
+      if (cursorVisible) {
+        ringX += (mouseX - ringX) * 0.15;
+        ringY += (mouseY - ringY) * 0.15;
+        ring.style.left = ringX + 'px';
+        ring.style.top = ringY + 'px';
+      }
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    const interactives = hero.querySelectorAll('a, button');
+    interactives.forEach((el) => {
+      el.addEventListener('mouseenter', () => ring.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('cursor-hover'));
+    });
+
+    // ── Particles ──
+    const container = document.getElementById('particles');
+    if (container && container.children.length === 0) {
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = 40 + Math.random() * 60 + '%';
+        p.style.setProperty('--duration', (4 + Math.random() * 6) + 's');
+        p.style.setProperty('--particle-delay', (Math.random() * 8) + 's');
+        const size = (2 + Math.random() * 3) + 'px';
+        p.style.width = size;
+        p.style.height = size;
+        container.appendChild(p);
+      }
+    }
+  }
+
+  initHero();
+  document.addEventListener('astro:after-swap', initHero);
+</script>

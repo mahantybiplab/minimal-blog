@@ -6,7 +6,7 @@ export async function GET() {
 
   const posts = allPosts.map((post, i) => ({
     index: i,
-    url: `/posts/${post.slug}`,
+    url: `/posts/${post.id}`,
     title: post.data.title,
     subtitle: post.data.subtitle ?? null,
     description: post.data.description,

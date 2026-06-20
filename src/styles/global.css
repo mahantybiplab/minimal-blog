@@ -1,8 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&family=JetBrains+Mono:wght@400;500&family=Recursive:wght@600;700&display=swap');
 @import "tailwindcss";
 @import "rehype-callouts/theme/obsidian";
 @plugin "@tailwindcss/typography";
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ------------------------------
    Theme variables
@@ -30,30 +29,42 @@
 
 /* Light Theme */
 :root {
-  --bg-body: #f8f9fc;
-  --fg-body: #0d1117;
-  --fg-muted: #6b7280;
-  --fg-subtitle: #4f46e5;
-  --color-primary: #6264d8;
-  --color-logo-adaptive: #6264d8;
-  --bg-menu: #f1f3f9;
-  --border-color: #e4e7ef;
-  --bg-card-hover: rgba(91, 94, 244, 0.04);
-  --glow-color: rgba(91, 94, 244, 0.15);
+  --bg-gradient-top: #e8f2eb; /* MistSurface */
+  --bg-gradient-bottom: #f2f7f3; /* MistWhite */
+  --header-gradient-start: #b8dec4; /* TealContainer */
+  --header-gradient-mid: #b8dec4;
+  --header-gradient-end: transparent;
+  
+  --bg-body: #f2f7f3;
+  --fg-body: #0d2b18;
+  --fg-muted: #3d6650;
+  --fg-subtitle: #2e7d52;
+  --color-primary: #2e7d52;
+  --color-logo-adaptive: #2e7d52;
+  --bg-menu: #e8f2eb;
+  --border-color: #b0d3bb;
+  --bg-card-hover: rgba(46, 125, 82, 0.04);
+  --glow-color: rgba(46, 125, 82, 0.15);
 }
 
 /* Dark Theme */
 .dark {
-  --bg-body: #06060f;
-  --fg-body: #e8eaf0;
-  --fg-muted: #8892a4;
-  --fg-subtitle: #7c7ff5;
-  --color-primary: #7c7ff5;
-  --color-logo-adaptive: #7c7ff5;
-  --bg-menu: #0b0b18;
-  --border-color: #16182a;
-  --bg-card-hover: rgba(124, 127, 245, 0.07);
-  --glow-color: rgba(124, 127, 245, 0.2);
+  --bg-gradient-top: #153329; /* SageContainer */
+  --bg-gradient-bottom: #080c0b; /* ForestDeep */
+  --header-gradient-start: #1a3029;
+  --header-gradient-mid: #101c17;
+  --header-gradient-end: #080c0b;
+
+  --bg-body: #080c0b;
+  --fg-body: #f0f7f3;
+  --fg-muted: #88a399;
+  --fg-subtitle: #9fffd5;
+  --color-primary: #9fffd5;
+  --color-logo-adaptive: #9fffd5;
+  --bg-menu: #121a17;
+  --border-color: #23302b;
+  --bg-card-hover: rgba(159, 255, 213, 0.07);
+  --glow-color: rgba(159, 255, 213, 0.2);
 }
 
 /* Global font rendering */
@@ -63,10 +74,11 @@ html {
   text-rendering: optimizeLegibility;
 }
 
-/* Subtle dot-grid background */
-body {
-  background-image: radial-gradient(circle, var(--border-color) 1px, transparent 1px);
-  background-size: 28px 28px;
+/* Subtle clean background for EnsoMori Zen feel */
+html, body {
+  background: linear-gradient(180deg, var(--bg-gradient-top) 0%, var(--bg-gradient-bottom) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 /* ---------------------------------------------------------
@@ -80,10 +92,10 @@ body {
 /* ---------------------------------------------------------
    2. EXTRA STYLING
 --------------------------------------------------------- */
-/* Light Mode Bold (Updated vibrant gradient) */
+/* Light Mode Bold (Updated to EnsoMori Mist surface gradient) */
 
 .prose strong {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, #2e7d52, #4a9b6f);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -91,7 +103,7 @@ body {
 }
 
 .dark .prose strong {
-  background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+  background: linear-gradient(135deg, #9fffd5, #a8e6cf);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

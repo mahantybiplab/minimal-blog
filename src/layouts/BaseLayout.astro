@@ -7,7 +7,7 @@ import "../styles/global.css";
 const { pageTitle, showHero = false } = Astro.props;
 ---
 
-<html lang="en" class="bg-body overscroll-none">
+<html lang="en" class="overscroll-none">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -43,14 +43,21 @@ const { pageTitle, showHero = false } = Astro.props;
     </script>
   </head>
   <body
-    class={`text-foreground font-sans transition-colors duration-300 px-4 sm:px-8 md:px-16 ${showHero ? 'pt-20' : ''}`}
+    class={`relative text-foreground font-sans transition-colors duration-300 px-4 sm:px-8 md:px-16 ${showHero ? 'pt-20' : ''}`}
   >
-    <Header showHero={showHero} />
-    {showHero && <Hero />}
-    <main>
-      <slot />
-      <Footer />
-    </main>
+    <!-- EnsoMori App Header Gradient (like HomeHeader in the Android app) -->
+    <div class="fixed top-0 left-0 right-0 h-full pointer-events-none z-0"
+         style="background: linear-gradient(180deg, var(--header-gradient-start) 0%, var(--header-gradient-mid) 30%, var(--header-gradient-end) 60%);">
+    </div>
+
+    <div class="relative z-10">
+      <Header showHero={showHero} />
+      {showHero && <Hero />}
+      <main>
+        <slot />
+        <Footer />
+      </main>
+    </div>
 
     <script is:inline>
       const copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;

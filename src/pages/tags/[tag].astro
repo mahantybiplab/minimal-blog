@@ -28,7 +28,7 @@ const { posts } = Astro.props;
     {
       posts.map((post: any) => (
         <ArticleCard
-          url={`/posts/${post.slug}`}
+          url={`/posts/${post.id}`}
           title={post.data.title}
           description={post.data.description}
           subtitle={post.data.subtitle}
