@@ -46,12 +46,12 @@ const { pageTitle, showHero = false } = Astro.props;
     class="relative text-foreground font-sans transition-colors duration-300 px-4 sm:px-8 md:px-16 pt-12 md:pt-16"
   >
     <!-- EnsoMori App Header Gradient (like HomeHeader in the Android app) -->
-    <div class="fixed top-0 left-0 right-0 h-full pointer-events-none z-0"
+    <div class="fixed -inset-[100px] pointer-events-none z-0"
          style="background: linear-gradient(180deg, var(--header-gradient-start) 0%, var(--header-gradient-mid) 30%, var(--header-gradient-end) 60%);">
     </div>
 
     <!-- Soft Light Beams Overlay (Continuous, mix-blend-normal for light mode compatibility, screen for dark) -->
-    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden mix-blend-normal dark:mix-blend-screen">
+    <div class="fixed -inset-[100px] pointer-events-none z-0 overflow-hidden mix-blend-normal dark:mix-blend-screen">
       <div class="light-beam" style="--beam-angle: -45deg; --beam-dur: 20s; --beam-opacity-light: 0.75; --beam-opacity-dark: 0.15; --beam-delay: 0s;"></div>
       <div class="light-beam" style="--beam-angle: -30deg; --beam-dur: 24s; --beam-opacity-light: 0.60; --beam-opacity-dark: 0.10; --beam-delay: -7s;"></div>
       <div class="light-beam" style="--beam-angle: -60deg; --beam-dur: 28s; --beam-opacity-light: 0.65; --beam-opacity-dark: 0.12; --beam-delay: -14s;"></div>
