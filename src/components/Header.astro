@@ -6,61 +6,33 @@ import { Icon } from 'astro-icon/components';
 const { showHero = false } = Astro.props;
 ---
 
-{showHero ? (
-  <header class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-2xl">
-    <div class="flex items-center justify-between h-12 px-4 sm:px-5
-                bg-navbar backdrop-blur-2xl
-                rounded-full border border-border/50
-                shadow-[0_4px_24px_-4px_rgba(0,0,0,0.12)]">
-      <Logo />
-      <div class="flex items-center gap-2 sm:gap-4">
-        <div class="hidden sm:flex items-center gap-4">
-          <a href="/" class="text-sm font-medium text-slight-gray hover:text-foreground transition-colors">Home</a>
-          <a href="/about/" class="text-sm font-medium text-slight-gray hover:text-foreground transition-colors">About</a>
-          <a href="https://github.com/mahantybiplab/" target="_blank" class="text-slight-gray hover:text-foreground transition-colors" aria-label="GitHub"><Icon name="mdi:github" size={20} /></a>
-          <a href="https://x.com/MahantyBiplab3" target="_blank" class="text-slight-gray hover:text-foreground transition-colors" aria-label="Twitter"><Icon name="x" size={16} /></a>
-          <div class="w-px h-4 bg-border/50"></div>
-        </div>
-        <ThemeIcon />
-        <button id="hamburger-btn" aria-label="Toggle menu"
-          class="sm:hidden flex items-center justify-center w-8 h-8 rounded-full text-slight-gray hover:text-foreground transition-colors">
-          <svg id="hamburger-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-          <svg id="hamburger-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
-            <path d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
+<header class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-2xl">
+  <div class="flex items-center justify-between h-12 px-4 sm:px-5
+              bg-navbar backdrop-blur-2xl
+              rounded-full border border-border/50
+              shadow-[0_4px_24px_-4px_rgba(0,0,0,0.12)]">
+    <Logo />
+    <div class="flex items-center gap-2 sm:gap-4">
+      <div class="hidden sm:flex items-center gap-4">
+        <a href="/" class="text-sm font-medium text-slight-gray hover:text-foreground transition-colors">Home</a>
+        <a href="/about/" class="text-sm font-medium text-slight-gray hover:text-foreground transition-colors">About</a>
+        <a href="https://github.com/mahantybiplab/" target="_blank" class="text-slight-gray hover:text-foreground transition-colors" aria-label="GitHub"><Icon name="mdi:github" size={20} /></a>
+        <a href="https://x.com/MahantyBiplab3" target="_blank" class="text-slight-gray hover:text-foreground transition-colors" aria-label="Twitter"><Icon name="x" size={16} /></a>
+        <div class="w-px h-4 bg-border/50"></div>
       </div>
+      <ThemeIcon />
+      <button id="hamburger-btn" aria-label="Toggle menu"
+        class="sm:hidden flex items-center justify-center w-8 h-8 rounded-full text-slight-gray hover:text-foreground transition-colors">
+        <svg id="hamburger-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg id="hamburger-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
+          <path d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
     </div>
-  </header>
-) : (
-  <header class="sticky top-0 z-50 -mx-4 sm:-mx-8 md:-mx-16 px-4 sm:px-8 md:px-16 bg-navbar backdrop-blur-xl">
-    <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/30 to-transparent"></div>
-    <div class="flex items-center justify-between h-14 max-w-5xl mx-auto">
-      <Logo />
-      <div class="flex items-center gap-3 sm:gap-5">
-        <div class="hidden sm:flex items-center gap-5">
-          <a href="/" class="text-sm font-medium text-slight-gray hover:text-foreground transition-colors">Home</a>
-          <a href="/about/" class="text-sm font-medium text-slight-gray hover:text-foreground transition-colors">About</a>
-          <a href="https://github.com/mahantybiplab/" target="_blank" class="text-slight-gray hover:text-foreground transition-colors" aria-label="GitHub"><Icon name="mdi:github" size={20} /></a>
-          <a href="https://x.com/MahantyBiplab3" target="_blank" class="text-slight-gray hover:text-foreground transition-colors" aria-label="Twitter"><Icon name="x" size={16} /></a>
-          <div class="w-px h-4 bg-border/40"></div>
-        </div>
-        <ThemeIcon />
-        <button id="hamburger-btn" aria-label="Toggle menu"
-          class="sm:hidden flex items-center justify-center w-8 h-8 rounded-lg text-slight-gray hover:text-foreground transition-colors">
-          <svg id="hamburger-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-          <svg id="hamburger-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
-            <path d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </header>
-)}
+  </div>
+</header>
 
 <!-- Full-screen overlay menu (shared) -->
 <div id="mobile-overlay"

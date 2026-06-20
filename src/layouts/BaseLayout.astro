@@ -43,7 +43,7 @@ const { pageTitle, showHero = false } = Astro.props;
     </script>
   </head>
   <body
-    class={`relative text-foreground font-sans transition-colors duration-300 px-4 sm:px-8 md:px-16 ${showHero ? 'pt-20' : ''}`}
+    class="relative text-foreground font-sans transition-colors duration-300 px-4 sm:px-8 md:px-16 pt-12 md:pt-16"
   >
     <!-- EnsoMori App Header Gradient (like HomeHeader in the Android app) -->
     <div class="fixed top-0 left-0 right-0 h-full pointer-events-none z-0"
@@ -68,42 +68,7 @@ const { pageTitle, showHero = false } = Astro.props;
       </main>
     </div>
 
-    <!-- Global Custom cursor element -->
-    <div id="cursor-arrow-el" class="fixed pointer-events-none z-50" style="opacity: 0; left: 0; top: 0; width: 0; height: 0;">
-      <svg class="cursor-arrow" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 4L22 10.5L14.5 14.5L10.5 22L4 4Z" fill="var(--color-primary)" stroke="var(--bg-body)" stroke-width="1.5" stroke-linejoin="round"/>
-      </svg>
-    </div>
     <style is:global>
-      /* Hide default cursor globally on devices with mouse */
-      @media (hover: hover) and (pointer: fine) {
-        * {
-          cursor: none !important;
-        }
-        #cursor-arrow-el {
-          display: block;
-        }
-      }
-      /* Hide custom cursor on touch devices */
-      @media (hover: none), (pointer: coarse) {
-        #cursor-arrow-el {
-          display: none !important;
-        }
-      }
-
-      /* Custom cursor styles */
-      #cursor-arrow-el {
-        transition: opacity 0.3s ease;
-      }
-      .cursor-arrow {
-        transform-origin: 4px 4px;
-        transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-        filter: drop-shadow(0 2px 6px var(--glow-color));
-      }
-      .cursor-hover .cursor-arrow {
-        transform: scale(1.3) rotate(-8deg);
-      }
-
       /* ─── Sweeping Light Beams ─── */
       .light-beam {
         position: absolute;
@@ -369,81 +334,9 @@ const { pageTitle, showHero = false } = Astro.props;
         });
       }
 
-      function initCursor() {
-        const arrowEl = document.getElementById('cursor-arrow-el');
-        if (!arrowEl) return;
-
-        let mouseX = 0, mouseY = 0;
-        let arrowX = 0, arrowY = 0;
-        let isVisible = false;
-
-        window.addEventListener('mousemove', (e) => {
-          mouseX = e.clientX;
-          mouseY = e.clientY;
-          if (!isVisible) {
-            arrowX = mouseX;
-            arrowY = mouseY;
-            arrowEl.style.opacity = '1';
-            isVisible = true;
-          }
-        });
-
-        document.addEventListener('mouseleave', () => {
-          arrowEl.style.opacity = '0';
-          isVisible = false;
-        });
-
-        document.addEventListener('mouseenter', () => {
-          arrowEl.style.opacity = '1';
-          isVisible = true;
-        });
-
-        // Robust check for leaving the browser window (e.g. going up to tabs)
-        document.addEventListener('mouseout', (e) => {
-          if (e.relatedTarget === null) {
-            arrowEl.style.opacity = '0';
-            isVisible = false;
-          }
-        });
-
-        function animateCursor() {
-          if (isVisible) {
-            arrowX += (mouseX - arrowX) * 0.35;
-            arrowY += (mouseY - arrowY) * 0.35;
-            arrowEl.style.left = arrowX + 'px';
-            arrowEl.style.top = arrowY + 'px';
-          }
-          requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
-
-        function updateInteractives() {
-          const interactives = document.querySelectorAll('a, button, [role="button"], input, select, textarea, .copy-btn');
-          interactives.forEach((el) => {
-            el.removeEventListener('mouseenter', onHoverIn);
-            el.removeEventListener('mouseleave', onHoverOut);
-            el.addEventListener('mouseenter', onHoverIn);
-            el.addEventListener('mouseleave', onHoverOut);
-          });
-        }
-
-        function onHoverIn() {
-          arrowEl.classList.add('cursor-hover');
-        }
-        function onHoverOut() {
-          arrowEl.classList.remove('cursor-hover');
-        }
-
-        updateInteractives();
-
-        const observer = new MutationObserver(updateInteractives);
-        observer.observe(document.body, { childList: true, subtree: true });
-      }
-
       function init() {
         setupCodeBlocks();
         setupCalloutCopy();
-        initCursor();
       }
 
       init();

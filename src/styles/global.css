@@ -85,15 +85,72 @@ html, body {
 }
 
 /* ---------------------------------------------------------
-   1. OBSIDIAN CALLOUT LINE BREAKS (every > on a new line)
+   1. OBSIDIAN CALLOUTS & BLOCKQUOTES (Elegant, Minimalist)
 --------------------------------------------------------- */
+.prose > *:first-child {
+  margin-top: 0 !important;
+}
+
 .prose .callout {
-  margin-top: 1rem;
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+  border-radius: 0.75rem !important;
+  border: 1px solid var(--border-color) !important;
+  background-color: var(--bg-menu) !important;
+  padding: 1.25rem 1.5rem !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+}
+
+.prose .callout-title {
+  font-family: var(--font-sans);
+  font-weight: 600 !important;
+  color: var(--fg-body) !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose .callout-content {
+  color: var(--fg-body) !important;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.prose .callout[data-callout="tip"] {
+  border-left: 4px solid var(--color-primary) !important;
+}
+.prose .callout[data-callout="info"] {
+  border-left: 4px solid #3b82f6 !important;
+}
+.prose .callout[data-callout="warning"] {
+  border-left: 4px solid #f59e0b !important;
+}
+.prose .callout[data-callout="danger"],
+.prose .callout[data-callout="caution"] {
+  border-left: 4px solid #ef4444 !important;
+}
+
+.prose blockquote {
+  font-style: normal !important;
+  font-weight: 400 !important;
+  color: var(--fg-body) !important;
+  border-left: 4px solid var(--color-primary) !important;
+  background-color: var(--bg-menu) !important;
+  padding: 1.25rem 1.5rem !important;
+  border-radius: 0 0.75rem 0.75rem 0;
+  margin-top: 1.5rem;
   margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+}
+
+.prose blockquote p::before,
+.prose blockquote p::after {
+  content: "" !important;
 }
 
 /* ---------------------------------------------------------
-   2. EXTRA STYLING
+   2. EXTRA STYLING & MATH/LATEX SHIELDING
 --------------------------------------------------------- */
 /* Light Mode Bold (Updated to EnsoMori Mist surface gradient) */
 
@@ -133,16 +190,15 @@ html, body {
 }
 
 @layer components {
-  /* 1. Shield KaTeX from the slight-gray prose paragraph colors */
+  /* Shield KaTeX to use theme text colors dynamically */
   .prose .katex,
   .prose .katex-display {
-    color: #1e293b !important; /* slate-800 for light mode */
+    color: var(--fg-body) !important;
   }
 
-  /* 2. Ensure it flips to white/light-gray in dark mode */
   .dark .prose .katex,
   .dark .prose .katex-display {
-    color: #f8fafc !important; /* slate-50 for dark mode */
+    color: var(--fg-body) !important;
   }
 }
 
@@ -184,19 +240,21 @@ pre {
   word-break: normal !important;
   overflow-x: auto !important;
 
-  font-size: 0.72rem;
-  line-height: 1.7;
+  font-size: 0.82rem !important;
+  line-height: 1.6;
 
-  padding: 1rem !important;
+  padding: 1.25rem !important;
   border-radius: 0.75rem;
 
-  border: 1px solid rgba(99, 102, 241, 0.12);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  background-color: var(--bg-menu) !important;
+  color: var(--fg-body) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
 
 @media (min-width: 640px) {
   pre {
-    font-size: 0.875rem;
+    font-size: 0.875rem !important;
     padding: 1.25rem !important;
   }
 }
@@ -206,22 +264,24 @@ pre::-webkit-scrollbar {
   height: 5px;
 }
 pre::-webkit-scrollbar-track {
-  background: rgba(120, 120, 255, 0.05);
+  background: transparent;
   border-radius: 10px;
 }
 pre::-webkit-scrollbar-thumb {
-  background: rgba(120, 120, 255, 0.35);
+  background: var(--border-color);
   border-radius: 10px;
 }
 pre::-webkit-scrollbar-thumb:hover {
-  background: rgba(120, 120, 255, 0.6);
+  background: var(--color-primary);
 }
 
 /* Inline code — also needs love on mobile */
 :not(pre) > code {
-  font-size: 0.78em;
+  font-size: 0.85em;
   padding: 0.15em 0.4em;
-  border-radius: 0.3rem;
-  background: rgba(120, 120, 255, 0.1);
+  border-radius: 0.375rem;
+  background-color: var(--bg-card-hover) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid var(--border-color) !important;
   word-break: break-word; /* inline code can wrap */
 }

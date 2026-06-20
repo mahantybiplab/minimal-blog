@@ -36,13 +36,14 @@ const fullDate = formatDateWithOrdinal(frontmatter.pubDate);
     {title && (
       <span class="text-4xl sm:text-5xl font-bold block leading-[1.2] tracking-tight
                    bg-gradient-to-br from-foreground to-foreground/70
-                   bg-clip-text text-transparent">
+                   bg-clip-text text-transparent"
+            style="font-family: 'Recursive', monospace;">
         {title}
       </span>
     )}
     {
       subtitle && (
-        <span class="text-lg sm:text-xl text-article-subtitle font-normal mb-8 mt-3 block leading-snug">
+        <span class="text-base sm:text-lg text-slight-gray italic border-l-2 border-border/80 pl-4 mb-8 mt-3 block leading-relaxed">
           {subtitle}
         </span>
       )
