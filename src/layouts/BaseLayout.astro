@@ -50,14 +50,11 @@ const { pageTitle, showHero = false } = Astro.props;
          style="background: linear-gradient(180deg, var(--header-gradient-start) 0%, var(--header-gradient-mid) 30%, var(--header-gradient-end) 60%);">
     </div>
 
-    <!-- Zen Garden Sand Ripples Overlay (Top Left) -->
-    <div class="fixed inset-0 pointer-events-none z-0 opacity-15" 
-         style="background-image: repeating-radial-gradient(circle at 0% 0%, transparent 0, transparent 55px, var(--color-primary) 55px, var(--color-primary) 56px); -webkit-mask-image: radial-gradient(circle at 0% 0%, black 0%, transparent 70%); mask-image: radial-gradient(circle at 0% 0%, black 0%, transparent 70%);">
-    </div>
-    
-    <!-- Zen Garden Sand Ripples Overlay (Bottom Right) -->
-    <div class="fixed inset-0 pointer-events-none z-0 opacity-[0.12]" 
-         style="background-image: repeating-radial-gradient(circle at 100% 100%, transparent 0, transparent 40px, var(--color-primary) 40px, var(--color-primary) 41px); -webkit-mask-image: radial-gradient(circle at 100% 100%, black 0%, transparent 80%); mask-image: radial-gradient(circle at 100% 100%, black 0%, transparent 80%);">
+    <!-- Soft Light Beams Overlay (Mask removed to restore sweeping continuity across the screen) -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden mix-blend-normal dark:mix-blend-screen">
+      <div class="light-beam" style="--beam-angle: -45deg; --beam-dur: 20s; --beam-opacity: 0.5; --beam-delay: 0s;"></div>
+      <div class="light-beam" style="--beam-angle: -30deg; --beam-dur: 24s; --beam-opacity: 0.4; --beam-delay: -7s;"></div>
+      <div class="light-beam" style="--beam-angle: -60deg; --beam-dur: 28s; --beam-opacity: 0.45; --beam-delay: -14s;"></div>
     </div>
 
 
@@ -105,6 +102,31 @@ const { pageTitle, showHero = false } = Astro.props;
       }
       .cursor-hover .cursor-arrow {
         transform: scale(1.3) rotate(-8deg);
+      }
+
+      /* ─── Sweeping Light Beams ─── */
+      .light-beam {
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        --beam-color: #FFFFFF; /* Light mode: Clean, premium white sun-rays */
+        --beam-opacity-multiplier: 0.45; /* Balanced visibility on soft light backgrounds */
+        background: radial-gradient(ellipse at center, var(--beam-color) 0%, transparent 60%);
+        transform-origin: center;
+        animation: beamSweepLight var(--beam-dur) var(--beam-delay) ease-in-out infinite alternate;
+      }
+      html.dark .light-beam {
+        --beam-color: var(--color-primary); /* Dark mode: Frosted emerald glow */
+        --beam-opacity-multiplier: 0.25; /* Subtle glow on dark backgrounds to protect text */
+        animation-name: beamSweepDark;
+      }
+      @keyframes beamSweepLight {
+        0% { transform: rotate(calc(var(--beam-angle) - 8deg)) scaleX(2) scaleY(0.08) translateY(-20%); opacity: calc(var(--beam-opacity) * var(--beam-opacity-multiplier) * 0.4); }
+        100% { transform: rotate(calc(var(--beam-angle) + 8deg)) scaleX(2.5) scaleY(0.18) translateY(20%); opacity: calc(var(--beam-opacity) * var(--beam-opacity-multiplier)); }
+      }
+      @keyframes beamSweepDark {
+        0% { transform: rotate(calc(var(--beam-angle) - 8deg)) scaleX(2) scaleY(0.08) translateY(-20%); opacity: calc(var(--beam-opacity) * var(--beam-opacity-multiplier) * 0.4); }
+        100% { transform: rotate(calc(var(--beam-angle) + 8deg)) scaleX(2.5) scaleY(0.18) translateY(20%); opacity: calc(var(--beam-opacity) * var(--beam-opacity-multiplier)); }
       }
     </style>
 
