@@ -3,19 +3,24 @@
 
 <a
   href="https://biplabmahanty.netlify.app/"
-  class="logo-glow font-semibold text-base tracking-tight text-foreground hover:text-nav transition-colors duration-200"
+  class="inline-flex items-center gap-1 font-semibold text-base tracking-tight text-foreground hover:text-nav transition-colors duration-200"
 >
-  Biplab ✦ Mahanty
+  <span>Biplab</span>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" class="w-[1.25em] h-[1.25em] fill-current align-middle -translate-y-[0.05em]" aria-hidden="true">
+    <defs>
+        <path id="petal" d="M64,64 C60,48 51,28 53,20 C55,10 61,5 67,7 C73,9 75,16 73,24 C71,32 66,48 64,64 Z" />
+    </defs>
+    <g>
+        <use href="#petal" />
+        <use href="#petal" transform="rotate(45 64 64)" />
+        <use href="#petal" transform="rotate(90 64 64)" />
+        <use href="#petal" transform="rotate(135 64 64)" />
+        <use href="#petal" transform="rotate(180 64 64)" />
+        <use href="#petal" transform="rotate(225 64 64)" />
+        <use href="#petal" transform="rotate(270 64 64)" />
+        <use href="#petal" transform="rotate(315 64 64)" />
+        <circle cx="64" cy="64" r="7.5" />
+    </g>
+  </svg>
+  <span>Mahanty</span>
 </a>
-
-<style>
-  .logo-glow {
-    text-shadow: 0 0 12px var(--glow-color), 0 0 30px var(--glow-color);
-    animation: logoGlow 3s ease-in-out infinite;
-  }
-
-  @keyframes logoGlow {
-    0%, 100% { text-shadow: 0 0 8px var(--glow-color), 0 0 20px transparent; }
-    50% { text-shadow: 0 0 16px var(--glow-color), 0 0 40px var(--glow-color); }
-  }
-</style>
