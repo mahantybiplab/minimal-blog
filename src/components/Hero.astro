@@ -14,8 +14,8 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
     <!-- Group A: Badge & Headline -->
     <div class="order-2 lg:col-start-1 lg:row-start-1 flex flex-col items-start w-full lg:mb-6">
       <!-- Elegant Badge -->
-      <a href="https://play.google.com/store/apps/details?id=com.mahantybiplab.ensomori" target="_blank" 
-         class="hero-slide-in group inline-flex items-center gap-2.5 px-3 py-1.5 md:px-4 md:py-1.5 rounded-full 
+      <a href="https://ensomori.com" target="_blank"
+         class="hero-slide-in group inline-flex items-center gap-2.5 px-3 py-1.5 md:px-4 md:py-1.5 rounded-full
                 border border-border/60 bg-body/50 backdrop-blur-sm
                 hover:border-nav/40 transition-all duration-500 mb-3 md:mb-5"
          style="--delay: 0s;">
@@ -25,7 +25,7 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
           <span class="relative inline-flex rounded-full h-full w-full bg-nav transition-all duration-500 group-hover:shadow-[0_0_8px_var(--color-primary)]"></span>
         </div>
         <span class="text-[10px] md:text-[11px] uppercase tracking-[0.15em] font-semibold text-slight-gray group-hover:text-foreground transition-colors duration-500">
-          Building EnsoMori
+          Now building · EnsoMori
         </span>
       </a>
 
@@ -38,7 +38,7 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
       <!-- Tagline -->
       <p class="hero-slide-in text-[11px] sm:text-[13px] uppercase tracking-[0.2em] font-medium text-nav text-wrap break-words"
          style="--delay: 0.3s;">
-        Privacy-first · Gentle App Interruption · 100% Offline
+        Systems, self-inquiry, and everything between.
       </p>
     </div>
 
@@ -57,7 +57,7 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
           <div class="hero-card-content relative">
             <Image 
               src={ensoGraphic} 
-              alt="EnsoMori Feature Graphic" 
+              alt="Ensō circle"
               class="w-full h-auto relative z-10"
             />
             <!-- Middle Enso glow overlay -->
@@ -72,22 +72,22 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
     <!-- Body Text -->
     <p class="hero-slide-in order-3 lg:col-start-1 lg:row-start-2 text-[14px] sm:text-[15px] lg:text-[16px] text-slight-gray max-w-full lg:max-w-2xl lg:mb-6 leading-[1.6] text-wrap break-words text-justify"
        style="--delay: 0.45s;">
-      I'm Biplab. I build <span class="text-foreground font-medium">EnsoMori</span> — an offline Android companion that turns <span class="text-foreground font-medium">mindless scrolling into moments of self-discovery</span>. If you're tired of strict app blockers and relying on <span class="text-foreground font-medium">sheer willpower</span>, EnsoMori offers a different path. Through <span class="text-foreground font-medium">gentle app interruptions</span>, a <span class="text-foreground font-medium">daily journal</span>, <span class="text-foreground font-medium">insight articles</span>, and <span class="text-foreground font-medium">mindful check-ins</span>, it builds <span class="text-foreground font-medium">effortless awareness</span>. Because real change only occurs when we stop resisting and learn to be with <span class="text-foreground italic">what is</span>, it helps you understand your deepest habits and <span class="text-foreground font-medium">change without trying to change</span>.
+      I'm Biplab. I write here about the two things I can't stop thinking about: <span class="text-foreground font-medium">how machines work</span>, from bytes to virtual machines, and <span class="text-foreground font-medium">how minds work</span>, from habit to the question of who's actually behind them. Right now I'm building <a href="https://ensomori.com" target="_blank" class="text-foreground font-medium underline underline-offset-2 decoration-border hover:text-nav transition-colors">EnsoMori</a>, a companion for seeing your own mind more clearly.
     </p>
 
     <!-- Actions -->
     <div class="hero-slide-in order-4 lg:col-start-1 lg:row-start-3 flex flex-wrap max-[400px]:flex-col max-[400px]:w-full max-[400px]:items-center items-center gap-3 lg:gap-4 pb-4 lg:pb-0"
          style="--delay: 0.6s;">
-      <a href="https://play.google.com/store/apps/details?id=com.mahantybiplab.ensomori" target="_blank" 
+      <a href="https://ensomori.com" target="_blank"
          class="hero-cta group relative px-3.5 py-1.5 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-full bg-foreground text-body text-[11px] md:text-[13px] lg:text-[14px] font-semibold tracking-wide overflow-hidden
                 transition-all duration-300">
-        <span class="relative z-10">Get the App</span>
+        <span class="relative z-10">Visit EnsoMori</span>
         <div class="hero-cta-shine"></div>
       </a>
-      <a href="#posts" 
-         class="hero-border-glow px-3.5 py-1.5 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-full border border-border text-slight-gray text-[11px] md:text-[13px] lg:text-[14px] font-semibold tracking-wide 
+      <a href="#posts"
+         class="hero-border-glow px-3.5 py-1.5 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-full border border-border text-slight-gray text-[11px] md:text-[13px] lg:text-[14px] font-semibold tracking-wide
                 hover:text-foreground transition-all duration-300">
-        Read Articles
+        Read the writings
       </a>
     </div>
     
@@ -119,7 +119,7 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
   }
 
   /* ─── Typewriter Caret ─── */
-  .typewriter-caret {
+  :global(.typewriter-caret) {
     display: inline-block;
     width: 3px;
     height: 1.1em;
@@ -252,13 +252,10 @@ import ensoGraphic from '../assets/enso_feature_graphic.png';
     const line2El = document.getElementById('tw-line2');
     if (line1El && line2El) {
       const phrases = [
-        ['Change Without', 'Trying To Change.'],
-        ['Gentle App', 'Interruptions.'],
-        ['30 Days', 'Self Inquiry.'],
-        ['1 Journal.', '3 Check-ins.'],
-        ['Log Moments.', 'Find Clarity.'],
-        ['Reflective', 'Insight Articles.'],
-        ['Understand', 'Yourself.']
+        ['Systems, and', 'the mind.'],
+        ['Low-level code.', 'Higher questions.'],
+        ['I build,', 'I write, I wonder.'],
+        ['Who are you,', 'really?']
       ];
       let phraseIdx = 0;
       let phase = 'type1'; // type1, type2, pause, del2, del1, wait

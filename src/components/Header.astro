@@ -15,6 +15,7 @@ const { showHero = false } = Astro.props;
     <div class="flex items-center gap-2 sm:gap-4">
       <div class="hidden sm:flex items-center gap-4">
         <a href="/" class="text-sm font-medium text-slight-gray hover:text-foreground transition-colors">Home</a>
+        <a href="/projects/" class="text-sm font-medium text-slight-gray hover:text-foreground transition-colors">Projects</a>
         <a href="/about/" class="text-sm font-medium text-slight-gray hover:text-foreground transition-colors">About</a>
         <a href="https://github.com/mahantybiplab/" target="_blank" class="text-slight-gray hover:text-foreground transition-colors" aria-label="GitHub"><Icon name="mdi:github" size={20} /></a>
         <a href="https://x.com/MahantyBiplab3" target="_blank" class="text-slight-gray hover:text-foreground transition-colors" aria-label="Twitter"><Icon name="x" size={16} /></a>
@@ -49,6 +50,10 @@ const { showHero = false } = Astro.props;
     <nav class="flex flex-col p-2">
       <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slight-gray hover:text-foreground hover:bg-card-hover transition-all duration-150 group">
         <span class="text-base font-medium">Home</span>
+        <svg class="ml-auto w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M7 3l3 3-3 3"/></svg>
+      </a>
+      <a href="/projects/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slight-gray hover:text-foreground hover:bg-card-hover transition-all duration-150 group">
+        <span class="text-base font-medium">Projects</span>
         <svg class="ml-auto w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M7 3l3 3-3 3"/></svg>
       </a>
       <a href="/about/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slight-gray hover:text-foreground hover:bg-card-hover transition-all duration-150 group">

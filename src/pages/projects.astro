@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout pageTitle="Projects — Biplab Mahanty">
+  <section class="max-w-4xl mx-auto px-2 py-16 sm:py-20 lg:py-24">
+    <p class="text-[10px] font-mono uppercase tracking-[0.2em] text-slight-gray/60 mb-4">Projects</p>
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground" style="font-family:'Recursive',monospace;">Things I build.</h1>
+    <p class="mt-4 text-slight-gray max-w-2xl leading-relaxed">
+      Tools and experiments, usually where software meets a quieter question about how we live.
+    </p>
+
+    <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <a href="https://ensomori.com" target="_blank" rel="noopener noreferrer"
+         class="group block rounded-2xl border border-border/70 bg-body/30 p-6 transition-all duration-200
+                hover:border-nav/60 hover:bg-card-hover hover:shadow-[0_0_22px_-6px_var(--glow-color)]">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-base font-semibold text-foreground" style="font-family:'Recursive',monospace;">EnsoMori</span>
+          <svg class="w-4 h-4 text-slight-gray group-hover:text-nav transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+        </div>
+        <p class="text-sm text-slight-gray leading-relaxed">A companion for seeing your own mind more clearly. Gentle awareness for the moment you reach to escape.</p>
+        <p class="mt-4 text-[11px] font-mono uppercase tracking-widest text-nav/80">Android · Now building</p>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
