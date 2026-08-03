@@ -1,0 +1,74 @@
+---
+import ActionLink from "../components/ActionLink.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const email = "contact@biplabmahanty.com";
+const pageTitle = "Contact — Biplab Mahanty";
+const description = "Contact Biplab Mahanty about an Android app, website, custom business tool, or thoughtful product collaboration.";
+---
+
+<BaseLayout pageTitle={pageTitle} description={description}>
+  <article class="mx-auto max-w-5xl pb-8 pt-12 sm:pt-20">
+    <header class="ambient-divider max-w-3xl border-b border-border/50 pb-14 sm:pb-20" data-page-reveal>
+      <p class="mb-4 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-primary">Contact</p>
+      <h1 class="font-[Recursive] text-[2.35rem] font-bold leading-[1.04] tracking-[-0.03em] text-foreground sm:text-5xl lg:text-6xl">Let’s understand the problem before deciding what to build.</h1>
+      <p class="mt-6 max-w-2xl text-[15px] leading-7 text-slight-gray sm:text-[17px] sm:leading-8">Tell me what is difficult, repetitive, scattered, or unclear in your current workflow. I’ll read it carefully and tell you whether I think custom software is the right next step.</p>
+    </header>
+
+    <section class="ambient-divider grid gap-8 border-b border-border/50 py-14 sm:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12" data-page-reveal>
+      <div class="rounded-3xl border border-border bg-menu/40 p-5 sm:p-7">
+        <p class="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Email</p>
+        <a href={`mailto:${email}?subject=Project%20inquiry`} class="mt-4 block break-all font-[Recursive] text-xl font-semibold text-foreground transition-colors hover:text-primary sm:text-2xl">{email}</a>
+        <p class="mt-3 text-sm leading-6 text-slight-gray">You can copy the address even if this device does not have an email application configured.</p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <button id="copy-email" type="button" class="cursor-pointer inline-flex min-h-10 items-center justify-center rounded-full bg-foreground px-5 py-2 text-xs font-semibold tracking-wide text-[color:var(--color-btn-primary-text)] transition-transform hover:scale-[1.03] active:scale-95 focus-visible:scale-[1.03] sm:min-h-11 sm:px-6 sm:text-[13px]" data-email={email}>
+            <span id="copy-email-label">Copy email address</span>
+          </button>
+          <ActionLink href={`mailto:${email}?subject=Project%20inquiry`} variant="secondary">Open email app</ActionLink>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-border bg-menu/25 p-5 sm:p-7">
+        <p class="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Helpful context</p>
+        <ul class="mt-5 space-y-4 text-sm leading-6 text-slight-gray">
+          <li class="flex gap-3"><span class="font-mono text-primary">01</span><span>What you or your business does.</span></li>
+          <li class="flex gap-3"><span class="font-mono text-primary">02</span><span>The workflow or problem that is getting in the way.</span></li>
+          <li class="flex gap-3"><span class="font-mono text-primary">03</span><span>Any useful link, screenshot, or existing tool you can share.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="py-14 sm:py-20" data-page-reveal>
+      <p class="max-w-2xl text-sm leading-7 text-slight-gray sm:text-base">A short, honest description is enough. You do not need a complete specification before contacting me.</p>
+    </section>
+  </article>
+</BaseLayout>
+
+<script>
+  function setupEmailCopy() {
+    const button = document.getElementById("copy-email");
+    const label = document.getElementById("copy-email-label");
+    if (!(button instanceof HTMLButtonElement) || !label || button.dataset.copyReady) return;
+
+    button.dataset.copyReady = "true";
+    button.addEventListener("click", async () => {
+      const email = button.dataset.email;
+      if (!email) return;
+
+      try {
+        await navigator.clipboard.writeText(email);
+        label.textContent = "✓ Copied";
+      } catch {
+        label.textContent = "Copy manually";
+      }
+
+      window.setTimeout(() => {
+        label.textContent = "Copy email address";
+      }, 2400);
+    });
+  }
+
+  setupEmailCopy();
+  document.addEventListener("astro:after-swap", setupEmailCopy);
+</script>

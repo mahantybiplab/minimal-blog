@@ -1,343 +1,88 @@
 ---
-import { Image } from 'astro:assets';
-import ensoGraphic from '../assets/enso_feature_graphic.png';
+import ActionLink from "./ActionLink.astro";
 ---
 
-<section id="hero" class="relative flex items-center justify-center overflow-hidden pt-10 md:pt-16 pb-8 md:pb-12">
-
-
-
-
-  <!-- Content Container -->
-  <div class="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] lg:grid-rows-[auto_auto_auto] gap-y-4 sm:gap-y-5 lg:gap-y-0 lg:gap-x-12 items-center lg:items-start place-content-center min-h-[65vh]">
-    
-    <!-- Group A: Badge & Headline -->
-    <div class="order-2 lg:col-start-1 lg:row-start-1 flex flex-col items-start w-full lg:mb-6">
-      <!-- Elegant Badge -->
-      <a href="https://ensomori.com" target="_blank"
-         class="hero-slide-in group inline-flex items-center gap-2.5 px-3 py-1.5 md:px-4 md:py-1.5 rounded-full
-                border border-border/60 bg-body/50 backdrop-blur-sm
-                hover:border-nav/40 transition-all duration-500 mb-3 md:mb-5"
-         style="--delay: 0s;">
-        <!-- Glowing Status Dot (Left) -->
-        <div class="relative flex h-1.5 w-1.5 md:h-2 md:w-2">
-          <span class="absolute inline-flex h-full w-full rounded-full bg-nav opacity-50 animate-ping" style="animation-duration: 3s;"></span>
-          <span class="relative inline-flex rounded-full h-full w-full bg-nav transition-all duration-500 group-hover:shadow-[0_0_8px_var(--color-primary)]"></span>
-        </div>
-        <span class="text-[10px] md:text-[11px] uppercase tracking-[0.15em] font-semibold text-slight-gray group-hover:text-foreground transition-colors duration-500">
-          Now building · EnsoMori
+<section id="hero" class="relative mx-auto flex min-h-[72vh] w-full max-w-6xl -translate-y-3 items-center px-1 pb-12 pt-20 sm:min-h-[76vh] sm:-translate-y-4 sm:px-0 sm:pb-16 sm:pt-24 lg:min-h-[78vh]">
+  <div class="w-full max-w-4xl">
+    <div>
+      <a href="https://ensomori.com" target="_blank" rel="noopener noreferrer" class="reveal group mb-5 inline-flex min-h-8 items-center gap-2.5 rounded-full border border-border bg-body/55 px-3.5 py-1.5 backdrop-blur-sm transition-colors hover:border-nav/60 sm:mb-7">
+        <span class="relative flex h-2 w-2" aria-hidden="true">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-nav opacity-50 [animation-duration:3s]"></span>
+          <span class="relative inline-flex h-full w-full rounded-full bg-nav"></span>
         </span>
+        <span class="font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-slight-gray group-hover:text-foreground sm:text-[10px]">Currently exploring · EnsoMori</span>
       </a>
 
-      <!-- Headline (Recursive font, typewriter via JS) -->
-      <h1 class="hero-slide-in mb-2 md:mb-4 w-full" style="--delay: 0.15s; font-family: 'Recursive', monospace;">
-        <span id="tw-line1" class="block text-[1.4rem] sm:text-[2rem] lg:text-[2.75rem] font-bold tracking-tight leading-[1.1] text-foreground w-full">&nbsp;</span>
-        <span id="tw-line2" class="block text-[1.4rem] sm:text-[2rem] lg:text-[2.75rem] font-bold tracking-tight leading-[1.1] text-foreground">&nbsp;</span>
+      <h1 class="work-headline reveal max-w-3xl font-[Recursive] text-[2rem] font-bold leading-[1.05] tracking-[-0.035em] text-foreground sm:text-4xl md:text-5xl lg:text-[3.35rem]" style="--delay: 80ms;">
+        <span class="headline-context">I build</span>
+        <span class="headline-static">software</span>
+        <span class="headline-context">for real work and deeper inquiry.</span>
       </h1>
-      
-      <!-- Tagline -->
-      <p class="hero-slide-in text-[11px] sm:text-[13px] uppercase tracking-[0.2em] font-medium text-nav text-wrap break-words"
-         style="--delay: 0.3s;">
-        Systems, self-inquiry, and everything between.
+
+      <p class="reveal mt-6 max-w-2xl text-[15px] leading-7 text-slight-gray sm:text-[17px] sm:leading-8" style="--delay: 160ms;">
+        I’m Biplab, a software developer building Android apps, websites, and custom business tools. I also write about how systems work and what it means to understand ourselves.
       </p>
-    </div>
 
-    <!-- Image -->
-    <div class="hero-slide-in order-1 lg:col-start-2 lg:row-start-1 lg:row-span-3 flex justify-center w-full max-w-[180px] sm:max-w-[220px] md:max-w-[260px] lg:max-w-[340px] mx-auto relative lg:self-center"
-         style="--delay: 0.35s;">
-      <div class="relative group">
-        
-        <!-- Enso circle glow layers -->
-        <div class="enso-glow enso-glow-outer"></div>
-        <div class="enso-glow enso-glow-inner"></div>
-
-        <!-- Animated border card -->
-        <div class="hero-card-wrapper">
-          <div class="hero-card-border"></div>
-          <div class="hero-card-content relative">
-            <Image 
-              src={ensoGraphic} 
-              alt="Ensō circle"
-              class="w-full h-auto relative z-10"
-            />
-            <!-- Middle Enso glow overlay -->
-            <div class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-              <div class="enso-middle-glow"></div>
-            </div>
-          </div>
-        </div>
+      <div class="reveal mt-7 flex flex-wrap items-center gap-3 sm:mt-9" style="--delay: 240ms;">
+        <ActionLink href="/work/">View selected work</ActionLink>
+        <ActionLink href="/contact/" variant="secondary">Discuss a project</ActionLink>
+        <a href="#posts" class="group inline-flex min-h-10 items-center gap-1.5 px-2 text-xs font-semibold text-slight-gray transition-colors hover:text-foreground sm:text-[13px]">
+          <span>Explore my writing</span>
+          <svg class="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
+        </a>
       </div>
     </div>
 
-    <!-- Body Text -->
-    <p class="hero-slide-in order-3 lg:col-start-1 lg:row-start-2 text-[14px] sm:text-[15px] lg:text-[16px] text-slight-gray max-w-full lg:max-w-2xl lg:mb-6 leading-[1.6] text-wrap break-words text-justify"
-       style="--delay: 0.45s;">
-      I'm Biplab. I write here about the two things I can't stop thinking about: <span class="text-foreground font-medium">how machines work</span>, from bytes to virtual machines, and <span class="text-foreground font-medium">how minds work</span>, from habit to the question of who's actually behind them. Right now I'm building <a href="https://ensomori.com" target="_blank" class="text-foreground font-medium underline underline-offset-2 decoration-border hover:text-nav transition-colors">EnsoMori</a>, a companion for seeing your own mind more clearly.
-    </p>
-
-    <!-- Actions -->
-    <div class="hero-slide-in order-4 lg:col-start-1 lg:row-start-3 flex flex-wrap max-[400px]:flex-col max-[400px]:w-full max-[400px]:items-center items-center gap-3 lg:gap-4 pb-4 lg:pb-0"
-         style="--delay: 0.6s;">
-      <a href="https://ensomori.com" target="_blank"
-         class="hero-cta group relative px-3.5 py-1.5 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-full bg-foreground text-body text-[11px] md:text-[13px] lg:text-[14px] font-semibold tracking-wide overflow-hidden
-                transition-all duration-300">
-        <span class="relative z-10">Visit EnsoMori</span>
-        <div class="hero-cta-shine"></div>
-      </a>
-      <a href="#posts"
-         class="hero-border-glow px-3.5 py-1.5 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-full border border-border text-slight-gray text-[11px] md:text-[13px] lg:text-[14px] font-semibold tracking-wide
-                hover:text-foreground transition-all duration-300">
-        Read the writings
-      </a>
-    </div>
-    
   </div>
 </section>
 
 <style>
-
-
-  /* ─── Middle Enso Glow ─── */
-  .enso-middle-glow {
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
-    opacity: 0.18;
-    filter: blur(20px);
-    mix-blend-mode: plus-lighter;
-  }
-
-  /* ─── Staggered Slide-In ─── */
-  .hero-slide-in {
+  .reveal {
     opacity: 0;
-    transform: translateY(40px) scale(0.97);
-    animation: slideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: var(--delay, 0s);
-  }
-  @keyframes slideIn {
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    transform: translateY(18px);
+    animation: hero-reveal 800ms var(--delay, 0ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
-  /* ─── Typewriter Caret ─── */
-  :global(.typewriter-caret) {
-    display: inline-block;
-    width: 3px;
-    height: 1.1em;
-    background: var(--color-primary);
-    margin-left: 4px;
-    vertical-align: text-bottom;
-    animation: caretBlink 0.7s step-end infinite;
-  }
-  @keyframes caretBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+  @keyframes hero-reveal {
+    to { opacity: 1; transform: translateY(0); }
   }
 
-
-
-  /* ─── CTA Button ─── */
-  .hero-cta:hover {
-    transform: scale(1.04);
-    box-shadow: 0 8px 40px -8px var(--glow-color);
-  }
-  .hero-cta-shine {
-    position: absolute; top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  }
-  .hero-cta:hover .hero-cta-shine {
-    animation: ctaShine 0.6s ease-out forwards;
-  }
-  @keyframes ctaShine { to { left: 100%; } }
-
-  .hero-border-glow:hover {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 20px -5px var(--glow-color), inset 0 0 20px -12px var(--glow-color);
+  .headline-context {
+    will-change: transform;
   }
 
-  /* ─── Enso Circle Glow (two layers for depth) ─── */
-  .enso-glow {
-    position: absolute;
-    top: 50%; left: 50%;
-    border-radius: 50%;
-    z-index: 0;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
+  .headline-rotator {
+    color: var(--color-nav);
+    margin-top: -0.05em;
+    margin-bottom: -0.05em;
   }
 
-  @keyframes glowBreatheOuter {
-    0%, 100% { opacity: 0.15; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 0.25; transform: translate(-50%, -50%) scale(1.15); }
+  .headline-track-item {
+    will-change: transform, opacity;
   }
 
-  @keyframes glowBreatheInner {
-    0%, 100% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 0.4; transform: translate(-50%, -50%) scale(1.2); }
+  .headline-static {
+    display: none;
+    color: var(--color-nav);
   }
 
-  .enso-glow-outer {
-    width: 80%; height: 80%;
-    background: var(--color-primary);
-    filter: blur(60px);
-    animation: glowBreatheOuter 8s ease-in-out infinite;
+  @keyframes slot-fade-1 {
+    0%, 28% { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    33% { opacity: 0; transform: translateY(-1em); pointer-events: none; }
+    34%, 95% { opacity: 0; transform: translateY(1em); pointer-events: none; }
+    100% { opacity: 1; transform: translateY(0); pointer-events: auto; }
   }
 
-  .enso-glow-inner {
-    width: 40%; height: 40%;
-    background: var(--color-primary);
-    filter: blur(30px);
-    animation: glowBreatheInner 8s ease-in-out infinite;
-    animation-delay: 1s;
+  @keyframes slot-fade-2 {
+    0%, 28% { opacity: 0; transform: translateY(1em); pointer-events: none; }
+    33%, 61% { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    66% { opacity: 0; transform: translateY(-1em); pointer-events: none; }
+    67%, 100% { opacity: 0; transform: translateY(1em); pointer-events: none; }
   }
 
-  /* ─── Animated Border Card ─── */
-  .hero-card-wrapper {
-    position: relative;
-    border-radius: 1rem;
-    padding: 1.5px;
-    animation: cardFloat 7s ease-in-out infinite;
-  }
-
-  .hero-card-border {
-    position: absolute;
-    inset: -1.5px;
-    border-radius: 1rem;
-    background: conic-gradient(
-      from var(--card-angle, 0deg),
-      var(--color-primary) 0%,
-      transparent 12%,
-      transparent 45%,
-      var(--color-primary) 55%,
-      transparent 67%,
-      transparent 100%
-    );
-    animation: rotateBorder 4s linear infinite;
-  }
-
-  /* Extra solid border underneath so it's always visible */
-  .hero-card-wrapper::before {
-    content: '';
-    position: absolute;
-    inset: -1.5px;
-    border-radius: 1rem;
-    border: 1px solid var(--color-primary);
-    opacity: 0.35;
-  }
-
-  .hero-card-content {
-    position: relative;
-    z-index: 1;
-    border-radius: calc(1rem - 1.5px);
-    overflow: hidden;
-    background: var(--bg-body);
-  }
-
-  @property --card-angle {
-    syntax: "<angle>";
-    initial-value: 0deg;
-    inherits: false;
-  }
-
-  @keyframes rotateBorder { to { --card-angle: 360deg; } }
-  @keyframes cardFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
+  @keyframes slot-fade-3 {
+    0%, 61% { opacity: 0; transform: translateY(1em); pointer-events: none; }
+    66%, 94% { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    100% { opacity: 0; transform: translateY(-1em); pointer-events: none; }
   }
 </style>
-
-<script>
-  function initHero() {
-    // ── Typewriter (two-line, sequential) ──
-    const line1El = document.getElementById('tw-line1');
-    const line2El = document.getElementById('tw-line2');
-    if (line1El && line2El) {
-      const phrases = [
-        ['Systems, and', 'the mind.'],
-        ['Low-level code.', 'Higher questions.'],
-        ['I build,', 'I write, I wonder.'],
-        ['Who are you,', 'really?']
-      ];
-      let phraseIdx = 0;
-      let phase = 'type1'; // type1, type2, pause, del2, del1, wait
-      let charIdx = 0;
-
-      function updateText(el, text, showCaret) {
-        let content = text || '&nbsp;';
-        if (showCaret) {
-          content += '<span class="typewriter-caret"></span>';
-        }
-        el.innerHTML = content;
-      }
-
-      function tick() {
-        const [l1, l2] = phrases[phraseIdx];
-
-        if (phase === 'type1') {
-          charIdx++;
-          const currentText = l1.slice(0, charIdx);
-          updateText(line1El, currentText, true);
-          updateText(line2El, '', false);
-          if (charIdx >= l1.length) { 
-            phase = 'type2'; 
-            charIdx = 0; 
-            setTimeout(tick, 200);
-          } else {
-            setTimeout(tick, 80);
-          }
-        } else if (phase === 'type2') {
-          charIdx++;
-          const currentText = l2.slice(0, charIdx);
-          updateText(line1El, l1, false);
-          updateText(line2El, currentText, true);
-          if (charIdx >= l2.length) { 
-            phase = 'pause'; 
-            setTimeout(tick, 2500);
-          } else {
-            setTimeout(tick, 80);
-          }
-        } else if (phase === 'pause') {
-          phase = 'del2';
-          charIdx = l2.length;
-          tick();
-        } else if (phase === 'del2') {
-          charIdx--;
-          const currentText = l2.slice(0, charIdx);
-          updateText(line1El, l1, false);
-          updateText(line2El, currentText, true);
-          if (charIdx <= 0) { 
-            phase = 'del1'; 
-            charIdx = l1.length; 
-            setTimeout(tick, 150);
-          } else {
-            setTimeout(tick, 40);
-          }
-        } else if (phase === 'del1') {
-          charIdx--;
-          const currentText = l1.slice(0, charIdx);
-          updateText(line1El, currentText, true);
-          updateText(line2El, '', false);
-          if (charIdx <= 0) { 
-            phase = 'wait'; 
-            setTimeout(tick, 400);
-          } else {
-            setTimeout(tick, 40);
-          }
-        } else if (phase === 'wait') {
-          phraseIdx = (phraseIdx + 1) % phrases.length;
-          phase = 'type1';
-          charIdx = 0;
-          tick();
-        }
-      }
-
-      setTimeout(tick, 600);
-    }
-
-
-
-
-  }
-
-  initHero();
-  document.addEventListener('astro:after-swap', initHero);
-</script>

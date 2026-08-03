@@ -1,0 +1,78 @@
+---
+interface Props {
+  href: string;
+  variant?: "primary" | "secondary";
+  target?: string;
+  rel?: string;
+}
+
+const {
+  href,
+  variant = "primary",
+  target,
+  rel,
+} = Astro.props;
+---
+
+<a
+  href={href}
+  target={target}
+  rel={rel}
+  class:list={[
+    "action-link group relative inline-flex min-h-10 items-center justify-center overflow-hidden rounded-full px-5 py-2 text-xs font-semibold tracking-wide transition-all duration-300 sm:min-h-11 sm:px-6 sm:text-[13px] lg:px-7 lg:text-sm",
+    variant === "primary"
+      ? "action-link-primary bg-foreground text-[color:var(--color-btn-primary-text)]"
+      : "action-link-secondary bg-transparent border border-[color:var(--color-btn-secondary)] text-[color:var(--color-btn-secondary)] hover:border-foreground hover:text-foreground transition-colors",
+  ]}
+>
+  <span class="relative z-10"><slot /></span>
+  {variant === "primary" && <span class="action-link-shine" aria-hidden="true"></span>}
+</a>
+
+<style>
+  .action-link:hover,
+  .action-link:focus-visible {
+    transform: scale(1.04);
+  }
+
+  .action-link-primary:hover,
+  .action-link-primary:focus-visible {
+    box-shadow: 0 8px 40px -8px var(--glow-color);
+  }
+
+  .action-link-secondary:hover,
+  .action-link-secondary:focus-visible {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 20px -5px var(--glow-color), inset 0 0 20px -12px var(--glow-color);
+  }
+
+  .action-link-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  }
+
+  .action-link-primary:hover .action-link-shine,
+  .action-link-primary:focus-visible .action-link-shine {
+    animation: action-link-shine 0.6s ease-out forwards;
+  }
+
+  @keyframes action-link-shine {
+    to { left: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .action-link:hover,
+    .action-link:focus-visible {
+      transform: none;
+    }
+
+    .action-link-primary:hover .action-link-shine,
+    .action-link-primary:focus-visible .action-link-shine {
+      animation: none;
+    }
+  }
+</style>

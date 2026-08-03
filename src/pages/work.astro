@@ -1,0 +1,686 @@
+---
+import { Image } from "astro:assets";
+import ensoGraphic from "../assets/enso_feature_graphic.png";
+import runwayGraphic from "../assets/images/runway/runway_graphic.jpg";
+import ActionLink from "../components/ActionLink.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout pageTitle="Work — Biplab Mahanty" description="Selected Android, web, and custom software work by Biplab Mahanty, including EnsoMori and Runway.">
+  <div class="work-page">
+    <section class="max-w-6xl mx-auto px-2 pt-12 sm:pt-16 lg:pt-20 pb-20 sm:pb-24">
+      <div class="max-w-5xl">
+        <div class="work-status mb-6" aria-label="Available for client work">
+          <span class="status-dot" aria-hidden="true"><span></span></span>
+          <span>Accepting new clients</span>
+        </div>
+        <h1
+          class="work-headline flex flex-col items-start gap-1 text-[clamp(1.75rem,7.6vw,2.4rem)] font-bold leading-[1.12] tracking-tight text-foreground sm:gap-0 sm:text-5xl sm:leading-[1.08] sm:tracking-normal lg:text-6xl"
+          style="font-family:'Recursive',monospace;"
+          aria-label="I build websites, Android apps, and custom tools for your business."
+        >
+          <span class="headline-context headline-context-start" aria-hidden="true">I build</span>
+          <span class="headline-rotator grid h-[1.2em] text-nav whitespace-nowrap" aria-hidden="true">
+            <span class="headline-track-item flex items-end pb-[0.05em]" style="grid-area: 1/1; animation: slot-fade-1 9s cubic-bezier(0.85, 0, 0.15, 1) infinite;">websites</span>
+            <span class="headline-track-item flex items-end pb-[0.05em]" style="grid-area: 1/1; animation: slot-fade-2 9s cubic-bezier(0.85, 0, 0.15, 1) infinite;">Android apps</span>
+            <span class="headline-track-item flex items-end pb-[0.05em]" style="grid-area: 1/1; animation: slot-fade-3 9s cubic-bezier(0.85, 0, 0.15, 1) infinite;">custom tools</span>
+          </span>
+          <span class="headline-static" aria-hidden="true">websites, Android apps, and custom tools</span>
+          <span class="headline-context headline-context-end text-slight-gray" aria-hidden="true">for your business.</span>
+        </h1>
+        <p class="hero-support mt-6 max-w-2xl text-base sm:text-lg text-slight-gray leading-relaxed">
+          I help independent businesses and professionals look polished online and stay organized behind the scenes. Whether you need a website that brings in better inquiries or a tool fitted to your workflow, I build software around the real problem.
+        </p>
+        <div class="hero-support mt-8 flex flex-wrap items-center gap-4">
+          <ActionLink href="/contact/">Discuss your project</ActionLink>
+          <ActionLink href="#selected-work" variant="secondary">View my work</ActionLink>
+        </div>
+      </div>
+    </section>
+
+    <section class="ambient-divider max-w-6xl mx-auto px-2 py-20 sm:py-24 border-t border-border/70" style="--drift-delay: 0s;">
+      <div class="max-w-2xl mb-12" data-reveal>
+        <p class="text-xs font-mono uppercase tracking-[0.16em] text-nav mb-4">How I can help</p>
+        <h2 class="text-3xl sm:text-4xl font-bold text-foreground" style="font-family:'Recursive',monospace;">Software fitted to the way your work actually happens.</h2>
+      </div>
+
+      <div class="services-grid ambient-divider grid grid-cols-1 md:grid-cols-3 border-y border-border/70" data-reveal-group style="--drift-delay: -3s;">
+        <article class="service-item relative py-8 md:pr-8" data-reveal>
+          <p class="text-xs font-mono text-nav">01</p>
+          <h3 class="mt-5 text-xl font-semibold text-foreground">Improve your current website</h3>
+          <p class="mt-3 text-sm text-slight-gray leading-relaxed">A broken contact form can cost you customers, while a confusing or outdated website can weaken trust. I fix mobile layouts, clarify your messaging, and make it easier for visitors to call, request a quote, or book a service.</p>
+        </article>
+
+        <article class="service-item ambient-divider-v relative py-8 md:px-8 border-t md:border-t-0 md:border-l border-border/70" data-reveal style="--drift-delay: -4s;">
+          <p class="text-xs font-mono text-nav">02</p>
+          <h3 class="mt-5 text-xl font-semibold text-foreground">Launch a new website</h3>
+          <p class="mt-3 text-sm text-slight-gray leading-relaxed">I design and build fast, modern websites that clearly explain what you do and make it easy for the right people to reach you.</p>
+        </article>
+
+        <article class="service-item ambient-divider-v relative py-8 md:pl-8 border-t md:border-t-0 md:border-l border-border/70" data-reveal style="--drift-delay: -7s;">
+          <p class="text-xs font-mono text-nav">03</p>
+          <h3 class="mt-5 text-xl font-semibold text-foreground">Custom business software</h3>
+          <p class="mt-3 text-sm text-slight-gray leading-relaxed">When spreadsheets and paper notes stop scaling, I build Android apps, desktop applications, and internal tools shaped around how your business actually operates.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="selected-work" class="ambient-divider max-w-6xl mx-auto px-2 py-20 sm:py-24 border-t border-border/70 scroll-mt-24" style="--drift-delay: -6s;">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="text-xs font-mono uppercase tracking-[0.16em] text-nav mb-4">Selected work</p>
+        <h2 class="text-3xl sm:text-4xl font-bold text-foreground" style="font-family:'Recursive',monospace;">Software I've designed and built.</h2>
+        <p class="mt-4 text-sm leading-6 text-slight-gray sm:text-base sm:leading-7">Independent products and explorations that show how I turn an uncertain problem into a focused product system.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" data-reveal-group>
+        <a href="https://ensomori.com" target="_blank" rel="noopener noreferrer" class="project-card relative group block rounded-3xl border border-border bg-menu/30 overflow-hidden" data-reveal>
+          <div class="overflow-hidden border-b border-border/70">
+            <Image src={ensoGraphic} alt="EnsoMori Android app and website" class="project-image w-full aspect-[2/1] object-cover" />
+          </div>
+          <div class="p-6 sm:p-8">
+            <div class="flex items-center justify-between gap-4">
+              <span class="text-xs font-mono uppercase tracking-widest text-nav">Independent experiment</span>
+              <span class="external-arrow text-slight-gray" aria-hidden="true">&nearr;</span>
+            </div>
+            <h3 class="mt-6 text-2xl font-semibold text-foreground">EnsoMori</h3>
+            <p class="mt-3 text-sm text-slight-gray leading-relaxed">An experiment in deep self-inquiry, exploring whether technology can open a question without turning understanding into another method to follow.</p>
+            <p class="mt-6 text-sm font-medium text-foreground">Product strategy, interface design, Android development, and web development</p>
+          </div>
+        </a>
+
+        <a href="/work/runway/" class="project-card relative group block rounded-3xl border border-border bg-menu/30 overflow-hidden" data-reveal>
+          <div class="overflow-hidden border-b border-border/70">
+            <Image src={runwayGraphic} alt="Runway app preview" class="project-image w-full aspect-[2/1] object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+          </div>
+          <div class="p-6 sm:p-8">
+            <div class="flex items-center justify-between gap-4">
+              <span class="text-xs font-mono uppercase tracking-widest text-nav">Independent product</span>
+              <span class="text-slight-gray group-hover:text-nav transition-colors" aria-hidden="true">&rarr;</span>
+            </div>
+            <h3 class="mt-6 text-2xl font-semibold text-foreground">Runway</h3>
+            <p class="mt-3 text-sm text-slight-gray leading-relaxed">A client-management Android app built for independent professionals. It organizes projects, estimates, and client details in one clear, structured dashboard.</p>
+            <p class="mt-6 text-sm font-medium text-foreground">Product design and Android development</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="ambient-divider max-w-6xl mx-auto px-2 py-20 sm:py-24 border-t border-border/70" style="--drift-delay: -8s;">
+      <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16" data-reveal-group>
+        <div class="max-w-xl" data-reveal>
+          <p class="mb-4 font-mono text-xs uppercase tracking-[0.16em] text-nav">How I work</p>
+          <h2 class="font-[Recursive] text-3xl font-bold text-foreground sm:text-4xl">Clear scope before more software.</h2>
+          <p class="mt-4 text-sm leading-6 text-slight-gray sm:text-base sm:leading-7">I work best with clients who can explain the problem clearly, make decisions when needed, and stay aligned on the scope and rhythm we set together.</p>
+        </div>
+        <ol class="grid gap-3 sm:grid-cols-2" data-reveal>
+          {[
+            ["01", "Understand the work", "We begin with the workflow, the friction, and what success would actually change."],
+            ["02", "Define the boundary", "We agree on what belongs in the first scope and what deliberately stays outside it."],
+            ["03", "Build in clear stages", "Working versions and focused reviews keep decisions visible while the product takes shape."],
+            ["04", "Handoff with context", "You receive the finished work, documentation where useful, and the support we agreed on."],
+          ].map(([number, title, copy]) => (
+            <li class="rounded-3xl border border-border bg-menu/35 p-5 sm:p-6">
+              <span class="font-mono text-[10px] tracking-[0.16em] text-nav">{number}</span>
+              <h3 class="mt-4 text-base font-semibold text-foreground">{title}</h3>
+              <p class="mt-2 text-sm leading-6 text-slight-gray">{copy}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="ambient-divider max-w-6xl mx-auto px-2 py-14 sm:py-20 border-y border-border/70" style="--drift-delay: -9s;">
+      <div data-reveal>
+        <div class="max-w-2xl mx-auto text-center">
+          <p class="text-xs font-mono uppercase tracking-[0.16em] text-nav mb-4">Contact</p>
+          <h2 class="text-3xl sm:text-5xl font-bold text-foreground text-balance" style="font-family:'Recursive',monospace;">Tell me what you need to fix or build.</h2>
+          <p class="mt-5 text-slight-gray leading-relaxed text-pretty">Send me a link to your current website, or describe a frustrating bottleneck in your daily work. I will review it and reply with a clear, practical next step to get it solved.</p>
+          <div class="mt-8 flex justify-center">
+            <ActionLink href="/contact/">Discuss your project</ActionLink>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .work-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 13px;
+    border: 1px solid color-mix(in srgb, var(--color-slight-gray) 30%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-body) 55%, transparent);
+    color: var(--color-slight-gray);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0;
+    animation: status-enter 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    backdrop-filter: blur(10px);
+  }
+
+  .status-dot {
+    position: relative;
+    display: inline-flex;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-nav);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--color-nav) 55%, transparent);
+  }
+
+  .status-dot span {
+    position: absolute;
+    inset: -4px;
+    border: 1px solid var(--color-nav);
+    border-radius: 50%;
+    animation: status-pulse 2.8s ease-out infinite;
+  }
+
+  .work-headline {
+    animation: headline-enter 750ms 80ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  :global(.hover-letter) {
+    display: inline-block;
+    transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1),
+                color 0.15s cubic-bezier(0.2, 0.8, 0.2, 1),
+                text-shadow 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+    cursor: default;
+    will-change: transform, color, text-shadow;
+  }
+
+
+
+  .headline-context {
+    will-change: transform;
+  }
+
+  .headline-context-start {
+    animation: context-start-shift 9s 1s ease-in-out infinite;
+  }
+
+  .headline-context-end {
+    animation: context-end-shift 9s 1s ease-in-out infinite;
+  }
+
+  .headline-static {
+    display: none;
+  }
+
+  .headline-rotator {
+    color: var(--color-nav);
+    margin-top: -0.05em;
+    margin-bottom: -0.05em;
+  }
+
+  .headline-track-item {
+    will-change: transform, opacity;
+  }
+
+  .headline-static {
+    display: none;
+    color: var(--color-nav);
+  }
+
+  .hero-support {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: support-enter 700ms 420ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .hero-support + .hero-support {
+    animation-delay: 520ms;
+  }
+
+  :global(.motion-divider) {
+    position: relative;
+  }
+
+  :global(.glow-track) {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 20;
+  }
+  :global(.glow-track-top) { top: -1px; }
+  :global(.glow-track-bottom) { bottom: -1px; }
+
+  :global(.glow-track::before) {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 150px;
+    background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--color-nav) 30%, transparent) 60%, var(--color-nav) 95%, #fff 100%);
+    box-shadow: 2px 0 12px 1px var(--color-nav);
+    opacity: 0;
+    transform: translateX(-160px);
+  }
+
+  :global(.glow-track.firing::before) {
+    animation: shoot-right 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  :global(.glow-track.firing-reverse::before) {
+    background: linear-gradient(270deg, transparent 0%, color-mix(in srgb, var(--color-nav) 30%, transparent) 60%, var(--color-nav) 95%, #fff 100%);
+    box-shadow: -2px 0 12px 1px var(--color-nav);
+    animation: shoot-left 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes status-enter {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes status-pulse {
+    0% { opacity: 0.65; transform: scale(0.65); }
+    65%, 100% { opacity: 0; transform: scale(1.5); }
+  }
+
+  @keyframes headline-enter {
+    from { opacity: 0; transform: translateY(14px) scale(0.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+
+
+  @keyframes slot-fade-1 {
+    0%, 28% { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    33% { opacity: 0; transform: translateY(-1em); pointer-events: none; }
+    34%, 95% { opacity: 0; transform: translateY(1em); pointer-events: none; }
+    100% { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  }
+
+  @keyframes slot-fade-2 {
+    0%, 28% { opacity: 0; transform: translateY(1em); pointer-events: none; }
+    33%, 61% { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    66% { opacity: 0; transform: translateY(-1em); pointer-events: none; }
+    67%, 100% { opacity: 0; transform: translateY(1em); pointer-events: none; }
+  }
+
+  @keyframes slot-fade-3 {
+    0%, 61% { opacity: 0; transform: translateY(1em); pointer-events: none; }
+    66%, 94% { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    100% { opacity: 0; transform: translateY(-1em); pointer-events: none; }
+  }
+
+  @keyframes support-enter {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+
+
+  .project-card,
+  .project-image,
+  .external-arrow,
+  .service-item {
+    transition-duration: 240ms;
+    transition-timing-function: ease;
+  }
+
+  .project-card {
+    transition-property: transform, border-color, background-color, color, box-shadow;
+    position: relative;
+    will-change: transform;
+  }
+
+  .project-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+      color-mix(in srgb, var(--color-nav) 10%, transparent),
+      transparent 40%
+    );
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  .project-card:hover::before {
+    opacity: 1;
+  }
+
+  .project-card:hover,
+  .project-card:focus-visible {
+    transform: translateY(-4px) scale(1.005);
+    border-color: color-mix(in srgb, var(--color-nav) 80%, transparent);
+    background: var(--color-card-hover);
+    box-shadow: 0 12px 24px -10px color-mix(in srgb, var(--color-nav) 15%, transparent);
+  }
+
+  .project-card:hover .project-image,
+  .project-card:focus-visible .project-image {
+    transform: scale(1.025);
+  }
+
+  .project-card:hover .external-arrow,
+  .project-card:focus-visible .external-arrow {
+    color: var(--color-nav);
+    transform: translate(2px, -2px);
+  }
+
+  .service-item:hover {
+    transform: translateY(-3px);
+  }
+
+
+
+  .work-motion [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(8px);
+    transition: opacity 600ms ease, transform 600ms ease, filter 600ms ease;
+  }
+
+  .work-motion [data-reveal].is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  .work-motion [data-reveal-group] > [data-reveal]:nth-child(2) {
+    transition-delay: 90ms;
+  }
+
+  .work-motion [data-reveal-group] > [data-reveal]:nth-child(3) {
+    transition-delay: 180ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work-status,
+    .status-dot span,
+    .work-headline,
+    .headline-context,
+    .headline-track,
+    .hero-support,
+    .motion-divider::before {
+      animation: none;
+    }
+
+    .work-headline,
+    .hero-support {
+      opacity: 1;
+      filter: none;
+      transform: none;
+    }
+
+    .headline-rotator {
+      display: none !important;
+    }
+
+    .headline-static {
+      display: inline !important;
+    }
+
+    .project-card,
+    .project-image,
+    .external-arrow,
+    .service-item,
+    .runway-window,
+    .work-motion [data-reveal] {
+      transition: none;
+      transform: none;
+    }
+  }
+
+
+
+
+  :global(.ambient-divider) {
+    position: relative;
+  }
+  
+  :global(.ambient-divider)::before,
+  :global(.ambient-divider.border-y)::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      color-mix(in srgb, var(--color-nav) 15%, transparent) 35%, 
+      color-mix(in srgb, var(--color-nav) 70%, transparent) 50%, 
+      color-mix(in srgb, var(--color-nav) 15%, transparent) 65%, 
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    opacity: 0.6;
+    pointer-events: none;
+    animation: ambient-pan 12s ease-in-out var(--drift-delay, 0s) infinite alternate;
+  }
+
+  :global(.ambient-divider)::before {
+    top: -1px;
+  }
+
+  :global(.ambient-divider.border-y)::after {
+    bottom: -1px;
+    animation-direction: alternate-reverse;
+  }
+
+  @keyframes ambient-pan {
+    0% { background-position: 100% 0; opacity: 0.2; }
+    50% { opacity: 0.7; }
+    100% { background-position: 0% 0; opacity: 0.2; }
+  }
+
+  /* Vertical / Responsive Dividers for the Service Grid */
+  @media (min-width: 768px) {
+    :global(.ambient-divider-v) { position: relative; }
+    :global(.ambient-divider-v)::before {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0; left: -1px;
+      width: 1px;
+      background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-nav) 15%, transparent) 35%, color-mix(in srgb, var(--color-nav) 70%, transparent) 50%, color-mix(in srgb, var(--color-nav) 15%, transparent) 65%, transparent 100%);
+      background-size: 100% 200%;
+      opacity: 0.6;
+      pointer-events: none;
+      animation: ambient-pan-v 12s ease-in-out var(--drift-delay, 0s) infinite alternate;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    :global(.ambient-divider-v) { position: relative; }
+    :global(.ambient-divider-v)::before {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: -1px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--color-nav) 15%, transparent) 35%, color-mix(in srgb, var(--color-nav) 70%, transparent) 50%, color-mix(in srgb, var(--color-nav) 15%, transparent) 65%, transparent 100%);
+      background-size: 200% 100%;
+      opacity: 0.6;
+      pointer-events: none;
+      animation: ambient-pan 12s ease-in-out var(--drift-delay, 0s) infinite alternate;
+    }
+  }
+
+  @keyframes ambient-pan-v {
+    0% { background-position: 0 100%; opacity: 0.2; }
+    50% { opacity: 0.7; }
+    100% { background-position: 0 0%; opacity: 0.2; }
+  }
+</style>
+
+
+<script>
+  function initWorkPageMotion() {
+    const page = document.querySelector<HTMLElement>('.work-page');
+    if (!page) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    if (!page.classList.contains('work-motion')) {
+      page.classList.add('work-motion');
+      
+      // Scroll Reveals
+      const elements = page.querySelectorAll('[data-reveal]');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px' });
+      elements.forEach((element) => observer.observe(element));
+    }
+
+    const cards = page.querySelectorAll<HTMLElement>('.project-card');
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -3;
+        const rotateY = ((x - centerX) / centerX) * 3;
+        
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+        card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01) translateY(-4px)`;
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+      });
+    });
+
+    const headings = page.querySelectorAll<HTMLElement>('.work-headline');
+    headings.forEach(heading => {
+      const splitTargets = heading.querySelectorAll<HTMLElement>('.headline-context, .headline-static, .headline-track-item');
+      type LetterEntry = {
+        wrapper: HTMLElement;
+        letter: HTMLElement;
+        rotator: Element | null;
+        baseColor: string;
+        hoverColor: string;
+      };
+      const allLetters: LetterEntry[] = [];
+      
+      splitTargets.forEach(el => {
+        const rotator = el.closest('.headline-rotator');
+        let baseColor = 'var(--color-foreground)';
+        let hoverColor = 'var(--color-nav)';
+        if (el.classList.contains('headline-context-end')) {
+          baseColor = 'var(--color-slight-gray)';
+          hoverColor = 'var(--color-nav)';
+        }
+        if (el.classList.contains('headline-static') || rotator) {
+          baseColor = 'var(--color-nav)';
+          hoverColor = 'var(--color-foreground)';
+        }
+
+        if (el.classList.contains('is-split')) {
+          const wrappers = Array.from(el.querySelectorAll<HTMLElement>('.letter-wrapper'));
+          wrappers.forEach(w => {
+            const letter = w.querySelector<HTMLElement>('.hover-letter');
+            if (!letter) return;
+            allLetters.push({
+              wrapper: w,
+              letter,
+              rotator,
+              baseColor,
+              hoverColor
+            });
+          });
+          return;
+        }
+        const text = el.textContent || '';
+        el.innerHTML = '';
+        text.split('').forEach(char => {
+          if (char === ' ') {
+            const space = document.createElement('span');
+            space.innerHTML = '&nbsp;';
+            el.appendChild(space);
+            return;
+          }
+          
+          const wrapper = document.createElement('span');
+          wrapper.className = 'letter-wrapper';
+          wrapper.style.display = 'inline-block';
+          
+          const letter = document.createElement('span');
+          letter.textContent = char;
+          letter.className = 'hover-letter';
+          
+          wrapper.appendChild(letter);
+          el.appendChild(wrapper);
+          allLetters.push({ wrapper, letter, rotator, baseColor, hoverColor });
+        });
+        el.classList.add('is-split');
+      });
+
+      let rafId: number | null = null;
+      const handleMove = (mouseX: number, mouseY: number) => {
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          const activeTracks = new Set(Array.from(heading.querySelectorAll<HTMLElement>('.headline-track-item')).filter(item => Number.parseFloat(window.getComputedStyle(item).opacity) > 0.1));
+          allLetters.forEach(({ wrapper, letter, rotator, baseColor, hoverColor }) => {
+            if (rotator && (!wrapper.parentElement || !activeTracks.has(wrapper.parentElement))) {
+              letter.style.transform = 'translateY(0) scale(1)';
+              letter.style.color = baseColor;
+              letter.style.textShadow = 'none';
+              return;
+            }
+            
+            const rect = wrapper.getBoundingClientRect();
+            const letterX = rect.left + rect.width / 2;
+            const letterY = rect.top + rect.height / 2;
+
+            
+            const dx = Math.abs(mouseX - letterX);
+            const dy = Math.abs(mouseY - letterY);
+            const maxDy = rect.height * 0.6;
+            
+            if (dy < maxDy && dx < 80) {
+              const intensity = Math.cos((dx / 80) * (Math.PI / 2));
+              const percent = (intensity * 100).toFixed(1);
+              const yJump = rotator ? (intensity * -8) : (intensity * -10);
+              
+              letter.style.transform = `translateY(${yJump}px) scale(${1 + intensity * 0.05})`;
+              letter.style.color = `color-mix(in srgb, ${hoverColor} ${percent}%, ${baseColor})`;
+              letter.style.textShadow = `0 0 ${intensity * 12}px color-mix(in srgb, ${hoverColor} ${intensity * 60}%, transparent)`;
+            } else {
+              letter.style.transform = 'translateY(0) scale(1)';
+              letter.style.color = baseColor;
+              letter.style.textShadow = 'none';
+            }
+          });
+        });
+      };
+
+      heading.addEventListener('mousemove', (e: MouseEvent) => handleMove(e.clientX, e.clientY));
+      heading.addEventListener('touchmove', (e: TouchEvent) => {
+        if (e.touches.length > 0) {
+          handleMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      const handleLeave = () => {
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        allLetters.forEach(({ letter, baseColor }) => {
+          letter.style.transform = 'translateY(0) scale(1)';
+          letter.style.color = baseColor;
+          letter.style.textShadow = 'none';
+        });
+      };
+
+      heading.addEventListener('mouseleave', handleLeave);
+      heading.addEventListener('touchend', handleLeave);
+    });
+
+  }
+
+  initWorkPageMotion();
+  document.addEventListener('astro:after-swap', initWorkPageMotion);
+</script>

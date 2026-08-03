@@ -5,23 +5,23 @@ import PostMeta from "../components/PostMeta.astro";
 const { frontmatter, headings } = Astro.props;
 ---
 
-<BaseLayout pageTitle={frontmatter.title}>
+<BaseLayout pageTitle={`${frontmatter.title} — Biplab Mahanty`} description={frontmatter.description}>
   <div class="max-w-5xl mx-auto">
-    <section class="py-12 md:py-16">
+    <section class="pb-10 pt-16 md:pb-14 md:pt-20">
       <div class="max-w-275 flex flex-col justify-center">
         <PostMeta frontmatter={frontmatter} />
       </div>
     </section>
 
-    <div class="pb-20 lg:flex lg:items-start lg:gap-12">
-      <div class="lg:w-3/4 min-w-0 prose-container [&>*:first-child]:mt-0">
+    <div class="pb-20 lg:flex lg:items-start lg:gap-14">
+      <div class="min-w-0 prose-container [&>*:first-child]:mt-0 lg:w-[72%]">
         <Prose>
           <slot />
         </Prose>
       </div>
 
       {headings && headings.length > 0 && (
-        <aside class="lg:w-1/4 lg:sticky lg:top-24 mb-12 lg:mb-0 z-20">
+        <aside class="mb-12 lg:sticky lg:top-24 lg:mb-0 lg:w-[28%] z-20">
           <nav class="toc lg:pt-[1.25rem]">
 
             {/* ── Mobile accordion ── */}

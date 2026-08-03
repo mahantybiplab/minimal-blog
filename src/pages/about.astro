@@ -1,56 +1,65 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ActionLink from "../components/ActionLink.astro";
 import { Image } from "astro:assets";
 import AuthorImage from "../assets/images/authorImage.png";
-const pageTitle = "About Me";
+
+const pageTitle = "About — Biplab Mahanty";
+const description = "About Biplab Mahanty, a software developer building Android apps, websites, custom tools, Runway, and EnsoMori.";
 ---
 
-<BaseLayout pageTitle={pageTitle}>
-  <section class="max-w-6xl mx-auto px-2 py-16 sm:py-20 lg:py-24">
-    <div class="grid grid-cols-1 md:grid-cols-2  items-center gap-5">
-      <!-- Left: Text Content -->
-      <div class="space-y-5 lg:space-y-7 order-2 md:order-1">
-        <h1
-          class="text-2xl font-mono sm:text-3xl lg:text-4xl font-bold leading-tight
-                   lg:whitespace-nowrap"
-        >
-          Hi there! I'm Biplab. 
-        </h1>
-
-        <p class="text-base  font-mono sm:text-lg lg:text-xl text-justify text-slight-gray">
-          Most people know me by that name — but that’s just a label, a way to
-          be identified. If I were to strip away every layer of identification,
-          <span class="text-foreground font-medium">who would I really be?</span>
-        </p>
-
-        <p class="text-base  font-mono sm:text-lg lg:text-xl text-justify text-slight-gray">
-          Have you ever wondered the same? It feels almost absurd — we spend so
-          much time learning about the world, yet so little time <span class="text-foreground font-medium">understanding ourselves</span>.
-        </p>
-        <p class="text-base  font-mono sm:text-lg lg:text-xl text-justify text-slight-gray">
-          These days, I find joy in exploring that intersection — life, code,
-          and the beautiful chaos and calm that live within both.
-        </p>
-        <p class="text-base  font-mono sm:text-lg lg:text-xl text-justify text-slight-gray">
-          That exploration is also why I built <span class="font-semibold not-italic text-foreground">EnsoMori</span> — a small companion for seeing your own mind more clearly.
-        </p>
-      </div>
-
-      <!-- Right: Image -->
-      <div
-        class="flex justify-center md:justify-end order-1 md:order-2 "
-      >
-        <div
-          class="w-64 sm:w-72 md:w-80 lg:w-96 aspect-square rounded-3xl overflow-hidden
-            shadow-[0_0_40px_rgba(120,120,255,0.1)] transition-transform duration-500 hover:-translate-y-1"
-        >
-          <Image
-            src={AuthorImage}
-            alt="Biplab Mahanty"
-            class="w-full h-full object-cover object-center"
-          />
+<BaseLayout pageTitle={pageTitle} description={description}>
+  <article class="mx-auto max-w-6xl pb-8 pt-12 sm:pt-20">
+    <header class="ambient-divider grid items-center gap-10 border-b border-border/50 pb-16 md:grid-cols-[1.1fr_0.9fr] md:gap-16 sm:pb-24" data-page-reveal>
+      <div class="order-2 md:order-1">
+        <p class="mb-4 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-primary">About me</p>
+        <h1 class="font-[Recursive] text-[2.35rem] font-bold leading-[1.04] tracking-[-0.03em] text-foreground sm:text-5xl lg:text-6xl">I’m Biplab. I build software and follow difficult questions.</h1>
+        <p class="mt-6 max-w-2xl text-[15px] leading-7 text-slight-gray sm:text-[17px] sm:leading-8">I’m a software developer working across Android apps, websites, and custom business tools. I care about making the structure behind a product as clear as the interface in front of it.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <ActionLink href="/work/">View my work</ActionLink>
+          <ActionLink href="/contact/" variant="secondary">Discuss a project</ActionLink>
         </div>
       </div>
-    </div>
-  </section>
+
+      <div class="order-1 mx-auto w-full max-w-[250px] md:order-2 md:max-w-[380px]">
+        <div class="aspect-square overflow-hidden rounded-[2rem] border border-border bg-menu/40 shadow-[0_30px_80px_-50px_var(--color-primary)]">
+          <Image src={AuthorImage} alt="Biplab Mahanty" class="h-full w-full object-cover object-center" loading="eager" />
+        </div>
+      </div>
+    </header>
+
+    <section class="ambient-divider grid gap-8 border-b border-border/50 py-16 sm:py-24 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20" aria-labelledby="building-title" data-page-reveal>
+      <div>
+        <p class="mb-4 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-primary">The work</p>
+        <h2 id="building-title" class="font-[Recursive] text-2xl font-bold text-foreground sm:text-3xl">Building from the workflow outward.</h2>
+      </div>
+      <div class="space-y-5 text-[15px] leading-7 text-slight-gray sm:text-base sm:leading-8">
+        <p>I like beginning with what someone is actually trying to do, where information gets lost, and which decisions matter. The technology should serve that structure instead of making the work adapt to the tool.</p>
+        <p>I explored this through <a href="/work/runway/" class="font-medium text-foreground underline decoration-border underline-offset-4 hover:text-primary">Runway</a>, an Android CRM that connects clients, projects, estimates, and invoices. It gave me a way to think carefully about related data, status changes, and what deserves attention on a small screen.</p>
+      </div>
+    </section>
+
+    <section class="ambient-divider grid gap-8 border-b border-border/50 py-16 sm:py-24 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20" aria-labelledby="inquiry-title" data-page-reveal>
+      <div>
+        <p class="mb-4 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-primary">The inquiry</p>
+        <h2 id="inquiry-title" class="font-[Recursive] text-2xl font-bold text-foreground sm:text-3xl">When the tool itself becomes a question.</h2>
+      </div>
+      <div class="space-y-5 text-[15px] leading-7 text-slight-gray sm:text-base sm:leading-8">
+        <p><a href="https://ensomori.com" target="_blank" rel="noopener noreferrer" class="font-medium text-foreground underline decoration-border underline-offset-4 hover:text-primary">EnsoMori</a> began from a personal problem. I kept escaping into my phone, understood intellectually that the escape was not solving anything, and still found the pattern returning.</p>
+        <p>I first built features that tried to interrupt that cycle. Using them made a deeper limitation visible: a method can calm a moment without bringing understanding. EnsoMori is now becoming an experiment in deep self-inquiry, asking whether technology can offer a starting question and a private place to observe without becoming another authority or system to depend on.</p>
+        <p>I do not have a finished answer. That uncertainty is part of the work, not something the product should hide.</p>
+      </div>
+    </section>
+
+    <section class="py-16 sm:py-24" aria-labelledby="current-title" data-page-reveal>
+      <div class="grid items-end gap-7 md:grid-cols-[1fr_auto] md:gap-12">
+        <div class="max-w-3xl">
+          <p class="mb-4 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-primary">Current focus</p>
+          <h2 id="current-title" class="font-[Recursive] text-2xl font-bold text-foreground sm:text-3xl lg:text-4xl">Client software, writing about how systems work, and the next form of EnsoMori.</h2>
+          <p class="mt-4 text-[15px] leading-7 text-slight-gray sm:text-base sm:leading-8">If you have a real business workflow that needs a thoughtful tool, or you want to discuss the questions behind EnsoMori, you can reach me directly.</p>
+        </div>
+        <ActionLink href="/contact/">Write to me</ActionLink>
+      </div>
+    </section>
+  </article>
 </BaseLayout>

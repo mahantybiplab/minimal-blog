@@ -25,27 +25,33 @@
   --color-article-subtitle: var(--fg-subtitle);
   --color-border: var(--border-color);
   --color-card-hover: var(--bg-card-hover);
+
+  --color-btn-primary-text: var(--btn-primary-text);
+  --color-btn-secondary: var(--btn-secondary);
 }
 
 /* Light Theme */
 :root {
-  --bg-gradient-top: #b8dec4; /* TealContainer */
-  --bg-gradient-bottom: #b8dec4; /* TealContainer */
-  --header-gradient-start: #b8dec4; /* TealContainer */
+  --bg-gradient-top: #b8dec4;
+  --bg-gradient-bottom: #b8dec4;
+  --header-gradient-start: #b8dec4;
   --header-gradient-mid: #b8dec4;
   --header-gradient-end: #b8dec4;
-  
+
   --bg-body: #b8dec4;
-  --bg-navbar: rgba(184, 222, 196, 0.75); /* Mint Glass */
+  --bg-navbar: rgba(184, 222, 196, 0.78);
   --fg-body: #0d2b18;
   --fg-muted: #3d6650;
   --fg-subtitle: #2e7d52;
   --color-primary: #2e7d52;
   --color-logo-adaptive: #2e7d52;
   --bg-menu: #e8f2eb;
-  --border-color: #b0d3bb;
+  --border-color: #82b492;
   --bg-card-hover: rgba(46, 125, 82, 0.04);
   --glow-color: rgba(46, 125, 82, 0.15);
+
+  --btn-primary-text: #e8f2eb;
+  --btn-secondary: #0d2b18;
 }
 
 /* Dark Theme */
@@ -67,6 +73,9 @@
   --border-color: #23302b;
   --bg-card-hover: rgba(159, 255, 213, 0.07);
   --glow-color: rgba(159, 255, 213, 0.2);
+
+  --btn-primary-text: #080c0b;
+  --btn-secondary: #88a399;
 }
 
 /* Global font rendering */
@@ -74,6 +83,58 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.page-reveal-motion [data-page-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(4px);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.page-reveal-motion [data-page-reveal].is-page-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .page-reveal-motion [data-page-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
 }
 
 /* Subtle clean background for EnsoMori Zen feel */
@@ -297,4 +358,122 @@ pre::-webkit-scrollbar-thumb:hover {
   color: var(--color-primary) !important;
   border: 1px solid var(--border-color) !important;
   word-break: break-word; /* inline code can wrap */
+}
+
+/* ------------------------------
+   Ambient Divider (Global)
+--------------------------------*/
+.ambient-divider {
+  position: relative;
+}
+
+.ambient-divider.border-t::before,
+.ambient-divider.border-y::before,
+.ambient-divider.border-y::after,
+.ambient-divider.border-b::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    color-mix(in srgb, var(--color-nav) 15%, transparent) 35%, 
+    color-mix(in srgb, var(--color-nav) 70%, transparent) 50%, 
+    color-mix(in srgb, var(--color-nav) 15%, transparent) 65%, 
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  opacity: 0.6;
+  pointer-events: none;
+  animation: ambient-pan 12s ease-in-out var(--drift-delay, 0s) infinite alternate;
+}
+
+.ambient-divider.border-t::before,
+.ambient-divider.border-y::before {
+  top: -1px;
+}
+
+.ambient-divider.border-y::after,
+.ambient-divider.border-b::after {
+  bottom: -1px;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes ambient-pan {
+  0% { background-position: 100% 0; opacity: 0.2; }
+  50% { opacity: 0.7; }
+  100% { background-position: 0% 0; opacity: 0.2; }
+}
+
+@media (min-width: 768px) {
+  .ambient-divider-v { position: relative; }
+  .ambient-divider-v::before {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: -1px;
+    width: 1px;
+    background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-nav) 15%, transparent) 35%, color-mix(in srgb, var(--color-nav) 70%, transparent) 50%, color-mix(in srgb, var(--color-nav) 15%, transparent) 65%, transparent 100%);
+    background-size: 100% 200%;
+    opacity: 0.6;
+    pointer-events: none;
+    animation: ambient-pan-v 12s ease-in-out var(--drift-delay, 0s) infinite alternate;
+  }
+}
+
+@media (max-width: 767px) {
+  .ambient-divider-v { position: relative; }
+  .ambient-divider-v::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--color-nav) 15%, transparent) 35%, color-mix(in srgb, var(--color-nav) 70%, transparent) 50%, color-mix(in srgb, var(--color-nav) 15%, transparent) 65%, transparent 100%);
+    background-size: 200% 100%;
+    opacity: 0.6;
+    pointer-events: none;
+    animation: ambient-pan 12s ease-in-out var(--drift-delay, 0s) infinite alternate;
+  }
+}
+
+@keyframes ambient-pan-v {
+  0% { background-position: 0 100%; opacity: 0.2; }
+  50% { opacity: 0.7; }
+  100% { background-position: 0 0%; opacity: 0.2; }
+}
+
+/* ------------------------------
+   Hover Letter / Work Headline (Global)
+--------------------------------*/
+.hover-letter {
+  display: inline-block;
+  transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1),
+              color 0.15s cubic-bezier(0.2, 0.8, 0.2, 1),
+              text-shadow 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: default;
+  will-change: transform, color, text-shadow;
+}
+
+.headline-context {
+  will-change: transform;
+}
+
+.headline-static {
+  display: inline;
+}
+
+.work-headline {
+  animation: headline-enter 750ms 80ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes headline-enter {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-headline {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }

@@ -1,0 +1,124 @@
+<script>
+  function initHeadlines() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const headings = document.querySelectorAll<HTMLElement>('.work-headline:not(.initialized)');
+    headings.forEach(heading => {
+      heading.classList.add('initialized');
+      const splitTargets = heading.querySelectorAll<HTMLElement>('.headline-context, .headline-static, .headline-track-item');
+      type LetterEntry = {
+        wrapper: HTMLElement;
+        letter: HTMLElement;
+        rotator: Element | null;
+        baseColor: string;
+        hoverColor: string;
+      };
+      const allLetters: LetterEntry[] = [];
+      
+      splitTargets.forEach(el => {
+        const rotator = el.closest('.headline-rotator');
+        let baseColor = 'var(--color-foreground)';
+        let hoverColor = 'var(--color-nav)';
+        
+        if (el.classList.contains('headline-static') || rotator) {
+          baseColor = 'var(--color-nav)';
+          hoverColor = 'var(--color-foreground)';
+        }
+
+        if (el.classList.contains('is-split')) return;
+
+        const text = el.textContent || '';
+        el.innerHTML = '';
+        
+        const words = text.split(/(\s+)/);
+        words.forEach(word => {
+          if (!word) return;
+          if (word.trim() === '') {
+            el.appendChild(document.createTextNode(word));
+            return;
+          }
+
+          const wordSpan = document.createElement('span');
+          wordSpan.style.display = 'inline-block';
+          wordSpan.style.whiteSpace = 'nowrap';
+
+          word.split('').forEach(char => {
+            const wrapper = document.createElement('span');
+            wrapper.className = 'letter-wrapper';
+            wrapper.style.display = 'inline-block';
+            
+            const letter = document.createElement('span');
+            letter.textContent = char;
+            letter.className = 'hover-letter';
+            
+            wrapper.appendChild(letter);
+            wordSpan.appendChild(wrapper);
+            allLetters.push({ wrapper, letter, rotator, baseColor, hoverColor });
+          });
+
+          el.appendChild(wordSpan);
+        });
+        el.classList.add('is-split');
+      });
+
+      let rafId: number | null = null;
+      const handleMove = (mouseX: number, mouseY: number) => {
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          const activeTracks = new Set(Array.from(heading.querySelectorAll<HTMLElement>('.headline-track-item')).filter(item => Number.parseFloat(window.getComputedStyle(item).opacity) > 0.1));
+          allLetters.forEach(({ wrapper, letter, rotator, baseColor, hoverColor }) => {
+            if (rotator && (!wrapper.parentElement || !activeTracks.has(wrapper.parentElement))) {
+              letter.style.transform = 'translateY(0) scale(1)';
+              letter.style.color = baseColor;
+              letter.style.textShadow = 'none';
+              return;
+            }
+            
+            const rect = wrapper.getBoundingClientRect();
+            const letterX = rect.left + rect.width / 2;
+            const letterY = rect.top + rect.height / 2;
+            
+            const dx = Math.abs(mouseX - letterX);
+            const dy = Math.abs(mouseY - letterY);
+            const maxDy = rect.height * 0.6;
+            
+            if (dy < maxDy && dx < 80) {
+              const intensity = Math.cos((dx / 80) * (Math.PI / 2));
+              const percent = (intensity * 100).toFixed(1);
+              const yJump = rotator ? (intensity * -8) : (intensity * -10);
+              
+              letter.style.transform = `translateY(${yJump}px) scale(${1 + intensity * 0.05})`;
+              letter.style.color = `color-mix(in srgb, ${hoverColor} ${percent}%, ${baseColor})`;
+              letter.style.textShadow = `0 0 ${intensity * 12}px color-mix(in srgb, ${hoverColor} ${intensity * 60}%, transparent)`;
+            } else {
+              letter.style.transform = 'translateY(0) scale(1)';
+              letter.style.color = baseColor;
+              letter.style.textShadow = 'none';
+            }
+          });
+        });
+      };
+
+      heading.addEventListener('mousemove', (e: MouseEvent) => handleMove(e.clientX, e.clientY));
+      heading.addEventListener('touchmove', (e: TouchEvent) => {
+        if (e.touches.length > 0) {
+          handleMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      const handleLeave = () => {
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        allLetters.forEach(({ letter, baseColor }) => {
+          letter.style.transform = 'translateY(0) scale(1)';
+          letter.style.color = baseColor;
+          letter.style.textShadow = 'none';
+        });
+      };
+
+      heading.addEventListener('mouseleave', handleLeave);
+      heading.addEventListener('touchend', handleLeave);
+    });
+  }
+
+  initHeadlines();
+  document.addEventListener('astro:after-swap', initHeadlines);
+</script>

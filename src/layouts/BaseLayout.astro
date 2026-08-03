@@ -2,17 +2,36 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Hero from "../components/Hero.astro";
+import WorkHeadlineJS from "../components/WorkHeadlineJS.astro";
 import "../styles/global.css";
 
-const { pageTitle, showHero = false } = Astro.props;
+const {
+  pageTitle,
+  description = "Biplab Mahanty builds Android apps, websites, and custom software, and writes about systems and self-inquiry.",
+  showHero = false,
+} = Astro.props;
+const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
 ---
 
 <html lang="en" class="overscroll-none">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="Biplab Mahanty" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
     <title>{pageTitle}</title>
     <!-- Preconnect to Google Fonts and load in parallel with CSS -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -84,7 +103,7 @@ const { pageTitle, showHero = false } = Astro.props;
 
 
     <div class="relative z-10">
-      <Header showHero={showHero} />
+      <Header />
       {showHero && <Hero />}
       <main>
         <slot />
@@ -219,7 +238,6 @@ const { pageTitle, showHero = false } = Astro.props;
           titleEl.remove();
         }
 
-        const autoTitle = type.charAt(0).toUpperCase() + type.slice(1);
         const titlePart =
           titleText && titleText.toLowerCase() !== type.toLowerCase()
             ? ` ${titleText}`
@@ -368,6 +386,35 @@ const { pageTitle, showHero = false } = Astro.props;
       document.addEventListener("DOMContentLoaded", init);
     </script>
     <script is:inline>
+      let pageRevealObserver;
+
+      function setupPageReveals() {
+        pageRevealObserver?.disconnect();
+
+        const elements = document.querySelectorAll('[data-page-reveal]');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!elements.length || reduceMotion || !('IntersectionObserver' in window)) {
+          document.documentElement.classList.remove('page-reveal-motion');
+          elements.forEach((element) => element.classList.add('is-page-visible'));
+          return;
+        }
+
+        document.documentElement.classList.add('page-reveal-motion');
+        pageRevealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-page-visible');
+            pageRevealObserver.unobserve(entry.target);
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px' });
+
+        elements.forEach((element) => pageRevealObserver.observe(element));
+      }
+
+      setupPageReveals();
+      document.addEventListener('astro:after-swap', setupPageReveals);
+    </script>
+    <script is:inline>
       // Fallback: Ensure the body is always made visible even if external CSS fails to load
       setTimeout(() => {
         if (window.getComputedStyle(document.body).visibility === 'hidden') {
@@ -376,5 +423,7 @@ const { pageTitle, showHero = false } = Astro.props;
         }
       }, 1500);
     </script>
+    
+    <WorkHeadlineJS />
   </body>
 </html>

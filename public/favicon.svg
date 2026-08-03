@@ -1,30 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
-    <defs>
-        <!-- Enlarged organic petal path for a slightly larger overall icon size -->
-        <path id="petal" d="M64,64 C60,48 51,28 53,20 C55,10 61,5 67,7 C73,9 75,16 73,24 C71,32 66,48 64,64 Z" />
-    </defs>
-    
-    <!-- 8 Rotated Petals + Center Core -->
-    <g class="flower">
-        <use href="#petal" />
-        <use href="#petal" transform="rotate(45 64 64)" />
-        <use href="#petal" transform="rotate(90 64 64)" />
-        <use href="#petal" transform="rotate(135 64 64)" />
-        <use href="#petal" transform="rotate(180 64 64)" />
-        <use href="#petal" transform="rotate(225 64 64)" />
-        <use href="#petal" transform="rotate(270 64 64)" />
-        <use href="#petal" transform="rotate(315 64 64)" />
-        <circle cx="64" cy="64" r="7.5" />
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Biplab Mahanty">
+  <defs>
+    <path id="petal" d="M64 65C57 48 49 29 51 19C53 9 60 4 67 6C75 8 78 16 75 26C73 36 68 51 64 65Z" />
+  </defs>
 
-    <style>
-        .flower {
-            fill: #0d2b18; /* Ink Deep for Light Mode */
-        }
-        @media (prefers-color-scheme: dark) {
-            .flower {
-                fill: #9fffd5; /* Frosted Emerald Glow for Dark Mode */
-            }
-        }
-    </style>
+  <g class="flower">
+    <use href="#petal" />
+    <use href="#petal" transform="rotate(45 64 64)" />
+    <use href="#petal" transform="rotate(90 64 64)" />
+    <use href="#petal" transform="rotate(135 64 64)" />
+    <use href="#petal" transform="rotate(180 64 64)" />
+    <use href="#petal" transform="rotate(225 64 64)" />
+    <use href="#petal" transform="rotate(270 64 64)" />
+    <use href="#petal" transform="rotate(315 64 64)" />
+    <circle cx="64" cy="64" r="9" />
+  </g>
+
+  <style>
+    .flower { fill: #12351f; }
+    @media (prefers-color-scheme: dark) {
+      .flower { fill: #b8f5d2; }
+    }
+  </style>
 </svg>
